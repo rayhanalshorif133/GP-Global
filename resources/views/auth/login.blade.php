@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title> {{env('APP_NAME')}} | Log in</title>
+    <title> {{ env('APP_NAME') }} | Log in</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -15,57 +15,71 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
 
-<body class="hold-transition login-page">
-    <div class="login-box">
-        <div class="login-logo">
-            <a href="#"><b>Robi</b>DOB</a>
+<body class="hold-transition">
+    <div class="header">
+        <div class="header__logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
         </div>
-        <!-- /.login-logo -->
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
+        <div class="header__title">
+            <h1>
+                {{env('APP_NAME')}}
+            </h1>
+        </div>
+    </div>
+    <div class="login-content">
+        <div class="login-box">
+            
+            <!-- /.login-logo -->
+            <div class="card">
+                <div class="card-body login-card-body">
+                    <div class="login-text">
+                        Portal Login
+                    </div>
+                    <p class="login-box-msg">Sign in to start your session</p>
 
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-                    <div class="input-group mb-3">
-                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                            name="email" value="admin@gmail.com" placeholder="Enter your email" required
-                            autocomplete="email" autofocus>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-envelope"></span>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="input-group mb-3">
+                            <input id="email" type="email"
+                                class="form-control @error('email') is-invalid @enderror" name="email"
+                                value="admin@gmail.com" placeholder="Enter your email" required autocomplete="email"
+                                autofocus>
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
                             </div>
+                            @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
-                        @error('email')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="input-group mb-3">
-                        <input id="password" type="password"
-                            class="form-control @error('password') is-invalid @enderror"
-                            placeholder="Enter your password" value="password" name="password" required autocomplete="current-password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                        <div class="input-group mb-3">
+                            <input id="password" type="password"
+                                class="form-control @error('password') is-invalid @enderror"
+                                placeholder="Enter your password" value="password" name="password" required
+                                autocomplete="current-password">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
                             </div>
-                        </div>
 
-                        @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
-                    </div>
-                </form>
+                        <div class="row">
+                            <button type="submit" class="btn btn-primary w-full">Sign In</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

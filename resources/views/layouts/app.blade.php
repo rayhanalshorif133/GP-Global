@@ -51,7 +51,7 @@
 
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="{{ asset('assets/images/robi-logo.png') }}" alt="AdminLTELogo"
+            <img class="animation__shake" src="{{ asset('assets/images/logo.png') }}" alt="AdminLTELogo"
                 height="60" width="auto">
         </div>
 
