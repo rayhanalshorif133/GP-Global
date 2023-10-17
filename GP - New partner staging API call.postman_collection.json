@@ -1,0 +1,310 @@
+{
+	"info": {
+		"_postman_id": "685f2d20-072e-4b74-9e71-2c7bd21ae778",
+		"name": "GP - New partner staging API call",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8472495"
+	},
+	"item": [
+		{
+			"name": "01 - Prepare API Call",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"amount\":5,\n \"currency\":\"BDT\",\n \"productDescription\":\"Game Thief\",\n \"subscriptionPeriod\":\"P1D\",\n \"urls\":{\"ok\":\"http://ok.com/ok_url_test\",\n         \"deny\":\"http://deny.com/deny_url_test\",\n         \"error\":\"http://error.com/error_url_test\"},\n \"operatorId\":\"GRA-BD\", \n \"pinRequest\": {\n     \"parameters\": {\n       \"serviceName\": \"Game Thief\"\n      }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.dob-staging.telenordigital.com/partner/v3/consent/prepare",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dob-staging",
+						"telenordigital",
+						"com"
+					],
+					"path": [
+						"partner",
+						"v3",
+						"consent",
+						"prepare"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02 - SMS MT API Call",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"outboundSMSMessageRequest\":\n  {\"address\":\"acr:TESTRCbkZ1G0280XyRk4PX2XR1TaTER\",\n   \"senderAddress\":\"tel:+88022900\",\n   \"messageType\":\"ARN\",\n   \"outboundSMSTextMessage\":{\"message\":\"{ServiceName} পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে {amount} + 16% TAX (VAT,SC) টাকা/{Period} হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে {URLLink} এ প্রবেশ করুন।\"},\n   \"senderName\":\"22900\"}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.dob.telenordigital.com/partner/smsmessaging/v2/outbound/tel:+88022900/requests",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dob",
+						"telenordigital",
+						"com"
+					],
+					"path": [
+						"partner",
+						"smsmessaging",
+						"v2",
+						"outbound",
+						"tel:+88022900",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03 - Charge API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amountTransaction\": {\n    \"endUserId\": \"TESTRCbkZ1G0280XyRk4PX2XR1TaTER\",\n    \"transactionOperationStatus\": \"Charged\",\n    \"referenceCode\": \"REF-1234567890987654321\",\n    \"paymentAmount\": {\n      \"chargingInformation\": {\n        \"amount\": 5,\n        \"description\": [\n          \"Game Thief\"\n        ],\n        \"currency\": \"BDT\"\n      },\n      \"chargingMetaData\": {\n        \"purchaseCategoryCode\": \"Game\",\n        \"mandateId\": {\n            \"subscription\": \"123456789\",\n            \"subscriptionPeriod\": \"P1D\",\n            \"consentId\":\"9b6ac757-b7fe-4e53-98b7-734985811111\"\n\n\n        }\n      }\n    },\n    \"operatorId\": \"GRA-BD\"\n  }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.dob.telenordigital.com/partner/payment/v1/TESTRCbkZ1G0280XyRk4PX2XR1TaTER/transactions/amount",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dob",
+						"telenordigital",
+						"com"
+					],
+					"path": [
+						"partner",
+						"payment",
+						"v1",
+						"TESTRCbkZ1G0280XyRk4PX2XR1TaTER",
+						"transactions",
+						"amount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04 - Invalidate ACR API",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.dob.telenordigital.com/partner/acrs/TESTRCbkZ1G0280XyRk4PX2XR1TaTER",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dob",
+						"telenordigital",
+						"com"
+					],
+					"path": [
+						"partner",
+						"acrs",
+						"TESTRCbkZ1G0280XyRk4PX2XR1TaTER"
+					]
+				},
+				"description": "When customer unsubscribe from your portal, you need to call the invalidate ACR API. \nYou will need to send the termination SMS since unsubscription originate from your portal. You have to send the SMS first before calling this Api."
+			},
+			"response": []
+		},
+		{
+			"name": "05 - MSISDN-to-ACR API",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.dob.telenordigital.com/partner/acrs?msisdn=8801313011111&includeSubPartners=true ",
+					"protocol": "https",
+					"host": [
+						"api",
+						"dob",
+						"telenordigital",
+						"com"
+					],
+					"path": [
+						"partner",
+						"acrs"
+					],
+					"query": [
+						{
+							"key": "msisdn",
+							"value": "8801313011111"
+						},
+						{
+							"key": "includeSubPartners",
+							"value": "true "
+						}
+					]
+				},
+				"description": "When a customer calls you and request for customer support, they will provide you with MSISDN, and you need to find the ACR in your system. This ACR by MSISDN API will return you the ACR prefix. You will need to use the USERNAME-acr-by-msisdn username / password only for this API."
+			},
+			"response": []
+		},
+		{
+			"name": "06 - Refund notification ",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"transactionReference\":\"REF-1234567890987654321\",\"timestamp\":\"2023-07-19T10:42:02.655476779Z\",\"transactionServerReference\":\"t16689500273\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": ""
+				},
+				"description": "Here is a sample notification structure we will send to your refund endpoint"
+			},
+			"response": []
+		},
+		{
+			"name": "07 - Unsubscription notification",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"deactivatedSubscriptions\":[{\"acr\":\"IFLQotMkNuFp3bk0XvIAhxxeRwY2nFXQ\",\"subscription\":\"4084092921621898\"}]}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	]
+}
