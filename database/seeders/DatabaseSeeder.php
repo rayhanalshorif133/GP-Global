@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         new UserAndRoleSeeder();
-        new ServiceSeeder();
+        // new ServiceSeeder();
         new ServiceProviderInfoSeeder();
     }
 }

@@ -12,11 +12,9 @@ class ServiceProviderInfo extends Model
     protected $table = 'service_provider_infos';
 
     protected $fillable = [
-        'aoc_endpoint_url',
-        'aoc_redirection_url',
-        'aoc_getAOCToken_url',
-        'sp_username',
-        'sp_api_key',
+        'username',
+        'password',
+        'url',
     ];
 
 

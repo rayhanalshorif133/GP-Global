@@ -61,7 +61,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
+                        <li class="nav-item d-none">
                             <a href="{{ route('service.index') }}" class="nav-link  @if ($routeName == 'service.index' || $routeName == 'service.show') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Service List</p>

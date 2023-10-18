@@ -32,37 +32,23 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="aoc_endpoint_url" class="required">AOC Endpoint URL </label>
-                                    <input type="text" name="aoc_endpoint_url" id="aoc_endpoint_url" required class="form-control"
-                                        placeholder="Enter AOC Endpoint URL" value="{{$serviceProviderInfo->aoc_endpoint_url}}">
+                                    <label for="username" class="required">Username</label>
+                                    <input type="text" name="username" id="username" required class="form-control"
+                                        placeholder="Enter Username" value="{{$serviceProviderInfo->username}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="aoc_redirection_url" class="required">AOC Redirection URL </label>
-                                    <input type="text" name="aoc_redirection_url" id="aoc_redirection_url" required class="form-control"
-                                        placeholder="Enter AOC Redirection URL " value="{{$serviceProviderInfo->aoc_redirection_url}}">
+                                    <label for="password" class="required">Password</label>
+                                    <input type="text" name="password" id="password" required class="form-control"
+                                        placeholder="Enter password" value="{{$serviceProviderInfo->password}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="aoc_getAOCToken_url" class="required">Get AOC Token URL</label>
-                                    <input type="text" name="aoc_getAOCToken_url" id="aoc_getAOCToken_url" required class="form-control"
-                                        placeholder="Enter Get AOC Token URL" value="{{$serviceProviderInfo->aoc_getAOCToken_url}}">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="sp_username" class="required">SP Username</label>
-                                    <input type="text" name="sp_username" id="sp_username" required class="form-control"
-                                        placeholder="Enter Service Name" value="{{$serviceProviderInfo->sp_username}}">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="sp_api_key" class="required">SP API Key</label>
-                                    <input type="text" name="sp_api_key" id="sp_api_key" required class="form-control"
-                                        placeholder="Enter Service Name" value="{{$serviceProviderInfo->sp_api_key}}">
+                                    <label for="url" class="required">URL</label>
+                                    <input type="text" name="url" id="url" required class="form-control"
+                                        placeholder="Enter url" value="{{$serviceProviderInfo->url}}">
                                 </div>
                             </div>
                         </div>
