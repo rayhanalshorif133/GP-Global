@@ -20,7 +20,7 @@ class CreateServicesTable extends Migration
             $table->string('keyword')->unique();
             $table->string('type')->enum('subscription', 'on-demand')->default('subscription');
             $table->string('validity')->enum('daily', 'weekly', 'monthly')->default('daily');
-            $table->float('charge', 0, 8)->nullable();
+            $table->float('amount', 0, 8)->nullable();
             $table->string('redirect_url')->nullable();
             $table->timestamps();
         });

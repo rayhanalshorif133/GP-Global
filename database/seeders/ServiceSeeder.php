@@ -15,15 +15,14 @@ class ServiceSeeder extends Seeder
     public function run()
     {
         
-            $service = new Service();
-            $service->name = 'Game Thief';
-            $service->keyword = 'GT';
-            $service->type = 'subscription';
-            $service->validity = 'daily';
-            $service->redirect_url = 'https://www.google.com/';
-            $service->charge = 10.00;
-            $service->save();
-
+        $service = new Service();
+        $service->name = 'Game Thief';
+        $service->keyword = 'GT';
+        $service->type = 'subscription';
+        $service->validity = 'daily';
+        $service->redirect_url = 'https://www.google.com/';
+        $service->amount = 10.00;
+        $service->save();
     }
 
 }

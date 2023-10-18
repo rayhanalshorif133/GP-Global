@@ -32,7 +32,7 @@ class ServiceController extends Controller
         $isValidator = Validator::make($request->all(), [
             'name' => 'required',
             'type' => 'required',
-            'charge' => 'required',
+            'amount' => 'required',
             'validity' => 'required',
             'keyword' => 'required|unique:services',
         ]);
@@ -47,7 +47,7 @@ class ServiceController extends Controller
             $service = new Service();
             $service->name = $request->name;
             $service->keyword = $request->keyword;
-            $service->charge = $request->charge;
+            $service->amount = $request->amount;
             $service->type = $request->type;
             $service->validity = $request->validity;
             $service->redirect_url = $request->redirect_url;
@@ -92,7 +92,7 @@ class ServiceController extends Controller
         $isValidator = Validator::make($request->all(), [
             'name' => 'required',
             'type' => 'required',
-            'charge' => 'required',
+            'amount' => 'required',
             'redirect_url' => 'required',
             'keyword' => 'required|unique:services,keyword,' . $id . ',id',
             'validity' => 'required',
@@ -112,7 +112,7 @@ class ServiceController extends Controller
             $service->name = $request->name;
             $service->type = $request->type;
             $service->keyword = $request->keyword;
-            $service->charge = $request->charge;
+            $service->amount = $request->amount;
             $service->validity = $request->validity;
             $service->redirect_url = $request->redirect_url;
             $service->save();

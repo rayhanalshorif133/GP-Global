@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\ServiceProviderInfo;
+use App\Models\Product;
 
 class ConsentController extends Controller
 {
@@ -27,6 +28,9 @@ class ConsentController extends Controller
             }
         */
         $serviceProviderInfo = ServiceProviderInfo::first();
+        $product = Product::select()->where('product_key', $request->productKey)
+            ->with('service')
+            ->first();
 
         $url = $serviceProviderInfo->url . '/partner/v3/consent/prepare';
 
@@ -55,6 +59,6 @@ class ConsentController extends Controller
 
 
 
-        return $this->respondWithSuccess('Consent prepared successfully!', $response->json());
+        return $this->respondWithSuccess('Consent prepared successfully!', $product);
     }
 }

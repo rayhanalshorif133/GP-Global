@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->foreignId("service_id")->constrained("services")->onDelete("cascade")->onUpdate("cascade");
             $table->string('name');
+            $table->string('product_key')->unique();           
             $table->string('description')->nullable();           
             $table->timestamps();
         });

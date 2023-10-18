@@ -45,29 +45,15 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="charge" class="required">Service charge</label>
-                                    <input type="number" name="charge" id="charge" required class="form-control"
-                                        placeholder="Enter Service charge">                                    
+                                    <label for="amount" class="required">Service amount</label>
+                                    <input type="number" name="amount" id="amount" required class="form-control"
+                                        placeholder="Enter Service amount">                                    
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="purchase_category_code" class="required">Purchase Category Code</label>
                                     <input type="text" name="purchase_category_code" id="purchase_category_code" required class="form-control"
-                                        placeholder="Enter Service Name">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="reference_code" class="required">Reference Code</label>
-                                    <input type="text" name="reference_code" id="reference_code" required class="form-control"
-                                        placeholder="Enter Service Name">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="channel" class="required">Channel</label>
-                                    <input type="text" name="channel" id="channel" required class="form-control"
                                         placeholder="Enter Service Name">
                                 </div>
                             </div>
@@ -83,13 +69,6 @@
                                     <label for="redirect_url" class="required">Redirect URL</label>
                                     <input type="text" name="redirect_url" id="redirect_url" required class="form-control"
                                         placeholder="Enter Redirect URL">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="on_behalf_of" class="required">On Behalf Of</label>
-                                    <input type="text" name="on_behalf_of" id="on_behalf_of" required class="form-control"
-                                        placeholder="Enter Service Name">
                                 </div>
                             </div>
                         </div>

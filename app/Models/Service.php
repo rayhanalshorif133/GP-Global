@@ -17,7 +17,7 @@ class Service extends Model
         'keyword',
         'type',
         'redirect_url',
-        'charge',
+        'amount',
         'validity',
     ];
 }

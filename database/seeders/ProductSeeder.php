@@ -19,12 +19,14 @@ class ProductSeeder extends Seeder
         $product = new Product();
         $product->service_id = 1;
         $product->name = 'Product 1';
+        $product->product_key = 'P1';
         $product->description = 'Product 1 des';
         $product->save();
 
         $product = new Product();
         $product->service_id = 1;
         $product->name = 'Product 2';
+        $product->product_key = 'P2';
         $product->description = 'Product 2 des';
         $product->save();
     }
