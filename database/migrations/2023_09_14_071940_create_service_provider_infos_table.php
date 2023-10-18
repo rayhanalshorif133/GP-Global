@@ -19,6 +19,7 @@ class CreateServiceProviderInfosTable extends Migration
             $table->string('username');
             $table->string('password');
             $table->string('url');
+            $table->string('operatorId');
             $table->timestamps();
         });
         $dbSeeder = new DatabaseSeeder();

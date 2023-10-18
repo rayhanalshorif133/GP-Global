@@ -51,6 +51,13 @@
                                         placeholder="Enter url" value="{{$serviceProviderInfo->url}}">
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="operatorId" class="required">Operator Id</label>
+                                    <input type="text" name="operatorId" id="operatorId" required class="form-control"
+                                        placeholder="Enter operatorId" value="{{$serviceProviderInfo->operatorId}}">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">

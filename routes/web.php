@@ -3,11 +3,12 @@
 use App\Http\Controllers\HitLogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\CallBackController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceProviderInfoController;
-use App\Http\Controllers\TokenController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,22 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('clear', function () {
+//     php artisan view:clear 
+// php artisan cache:clear
+// php artisan route:clear
+// php artisan config:clear
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('optimize:clear');
+    Artisan::call('config:cache');
+    Artisan::call('optimize');
+    Artisan::call('route:cache');
+    return 'Clear';
+});
 
 Route::get('/', function () {
     // return view('welcome');
@@ -33,10 +50,13 @@ Auth::routes();
 
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-// Route::resource('service', ServiceController::class);
+Route::resource('service', ServiceController::class);
 Route::resource('service-provider-info', ServiceProviderInfoController::class);
+Route::resource('product', ProductController::class);
 
-Route::get('callback', [CallBackController::class, 'callback'])->name('callback');
+
+
+
 
 
 Route::prefix('hit_log')

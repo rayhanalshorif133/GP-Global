@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCallbacksTable extends Migration
+class CreatePorductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateCallbacksTable extends Migration
      */
     public function up()
     {
-        Schema::create('callbacks', function (Blueprint $table) {
+        Schema::create('porducts', function (Blueprint $table) {
             $table->id();
-            $table->string('aocTransID')->nullable();
-            $table->text('raw_data')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ class CreateCallbacksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('callbacks');
+        Schema::dropIfExists('porducts');
     }
 }

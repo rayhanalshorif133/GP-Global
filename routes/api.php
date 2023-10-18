@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\CallBackController;
-use App\Http\Controllers\Api\NDTVController;
-use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\ConsentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,23 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // getToken Method only supports GET and POST
-Route::match(['get', 'post'], 'getToken/{keyword?}', [NDTVController::class, 'getToken'])->name('getToken');
+// Route::match(['get', 'post'], 'getToken/{keyword?}', [NDTVController::class, 'getToken'])->name('getToken');
 
-Route::get('redirect/{aocTransID}', [NDTVController::class, 'redirect'])->name('redirect');
-
-Route::get('chargeStatus/{aocTransID}', [NDTVController::class, 'chargeStatus'])->name('chargeStatus');
+Route::post('consent/prepare', [ConsentController::class, 'prepare'])->name('consent.prepare');
 
 
-Route::get('renewSubscription/{spTransID}/{msisdn}', [SubscriptionController::class, 'renewSubscription'])->name('renewSubscription');
-Route::get('cancelSubscription/{spTransID}/{msisdn}', [SubscriptionController::class, 'cancelSubscription'])->name('cancelSubscription');
-Route::get('subscriptionStatus/{subscriptionID}/{msisdn}', [SubscriptionController::class, 'subscriptionStatus'])->name('subscriptionStatus');
 
-
-// Route::get('chargeWithTAC/{aocTransID}/{msisdn}', [NDTVController::class, 'chargeWithTAC'])->name('chargeWithTAC');
-// Route::get('requestNewTAC/{aocTransID}/{msisdn}', [NDTVController::class, 'requestNewTAC'])->name('requestNewTAC');
-// Route::post('directCharge/', [NDTVController::class, 'directCharge'])->name('directCharge');
-// Route::get('requestDirectChargeTAC/{aocTransID}/{msisdn}', [NDTVController::class, 'requestDirectChargeTAC'])->name('requestDirectChargeTAC');
-// Route::post('directChargeWithStepDown/', [NDTVController::class, 'directChargeWithStepDown'])->name('directChargeWithStepDown');
-// Route::post('subscriptionStatus/', [NDTVController::class, 'subscriptionStatus'])->name('subscriptionStatus');
-// Route::post('refund/', [NDTVController::class, 'refund'])->name('refund');
-// Route::post('refundStatus/', [NDTVController::class, 'refundStatus'])->name('refundStatus');

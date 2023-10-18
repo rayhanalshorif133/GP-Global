@@ -31,6 +31,9 @@ class ServiceProviderInfoController extends Controller
        try {
         $serviceProviderInfo = ServiceProviderInfo::find($serviceProviderInfo);
         $serviceProviderInfo->username = $request->username;
+        $serviceProviderInfo->password = $request->password;
+        $serviceProviderInfo->url = $request->url;
+        $serviceProviderInfo->operatorId = $request->operatorId;
         $serviceProviderInfo->save();
         flash()->addSuccess('Service Provider Info updated successfully!');
         return redirect()->back();

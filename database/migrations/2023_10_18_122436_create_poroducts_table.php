@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateChargeStatusResponseRawsTable extends Migration
+class CreatePoroductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateChargeStatusResponseRawsTable extends Migration
      */
     public function up()
     {
-        Schema::create('charge_status_response_raws', function (Blueprint $table) {
+        Schema::create('poroducts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('charge_status_response_id')->constrained('charge_status_responses');
-            $table->longText('data')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ class CreateChargeStatusResponseRawsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('charge_status_response_raws');
+        Schema::dropIfExists('poroducts');
     }
 }

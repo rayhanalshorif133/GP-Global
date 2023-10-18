@@ -13,14 +13,7 @@ class Service extends Model
 
     protected $fillable = [
         'name',
-        'type',
         'keyword',
         'validity',
-        'purchase_category_code',
-        'reference_code',
-        'channel',
-        'redirect_url',
-        'on_behalf_of',
-        'charge',
     ];
 }
