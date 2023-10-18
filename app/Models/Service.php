@@ -11,9 +11,13 @@ class Service extends Model
 
     protected $table = 'services';
 
+    
     protected $fillable = [
         'name',
         'keyword',
+        'type',
+        'redirect_url',
+        'charge',
         'validity',
     ];
 }

@@ -8,4 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+
+    protected $fillable=[
+        'service_id',
+        'name',
+        'description',
+        'product_key',
+    ];
+
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 }

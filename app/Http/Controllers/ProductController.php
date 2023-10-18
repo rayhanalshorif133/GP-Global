@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
     // resource controller
     public function index()
     {
+        if (request()->ajax()) {
+            $query = Product::orderBy('id', 'desc')
+                ->with('service')->get();
+            return DataTables::of($query)
+                ->rawColumns(['action'])
+                ->toJson();
+        }
         return view('product.index');
     }
 

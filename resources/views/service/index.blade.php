@@ -31,7 +31,6 @@
                         <tr>
                             <th>Name</th>
                             <th>Type</th>
-                            <th>Channel</th>
                             <th>keyword</th>
                             <th>Validity</th>
                             <th>Charge</th>
@@ -69,12 +68,6 @@
                     {
                         render: function(data, type, row) {
                             return row.type;
-                        },
-                        targets: 0,
-                    },
-                    {
-                        render: function(data, type, row) {
-                            return row.channel;
                         },
                         targets: 0,
                     },
