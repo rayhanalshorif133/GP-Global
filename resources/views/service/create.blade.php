@@ -52,13 +52,6 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="purchase_category_code" class="required">Purchase Category Code</label>
-                                    <input type="text" name="purchase_category_code" id="purchase_category_code" required class="form-control"
-                                        placeholder="Enter Service Name">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label for="keyword" class="required">Keyword</label>
                                     <input type="text" name="keyword" id="keyword" required class="form-control"
                                         placeholder="Enter Keyword Name">

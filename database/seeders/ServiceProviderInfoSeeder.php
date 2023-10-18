@@ -20,7 +20,7 @@ class ServiceProviderInfoSeeder extends Seeder
         $serviceProviderInfo->username = 'b2mtech';
         $serviceProviderInfo->password = 'vCHth06udnTiQBsllDA4KEg147wVqlIt';
         $serviceProviderInfo->url = 'https://api.dob-staging.telenordigital.com';
-        $serviceProviderInfo->operatorId = 'https://api.dob-staging.telenordigital.com';
+        $serviceProviderInfo->operatorId = 'GRA-BD';
         $serviceProviderInfo->save();
     }
 }

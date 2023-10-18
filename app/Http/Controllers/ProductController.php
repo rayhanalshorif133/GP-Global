@@ -8,7 +8,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
-    // resource controller
     public function index()
     {
         if (request()->ajax()) {

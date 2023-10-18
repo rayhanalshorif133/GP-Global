@@ -12,21 +12,7 @@ class ConsentController extends Controller
 {
     public function prepare(Request $request)
     {
-        /* {"amount":5,
-            "currency":"BDT",
-            "productDescription":"Game Thief",
-            "subscriptionPeriod":"P1D",
-            "urls":{"ok":"http://ok.com/ok_url_test",
-                    "deny":"http://deny.com/deny_url_test",
-                    "error":"http://error.com/error_url_test"},
-            "operatorId":"GRA-BD", 
-            "pinRequest": {
-                "parameters": {
-                  "serviceName": "Game Thief"
-                 }
-             }
-            }
-        */
+        
         $serviceProviderInfo = ServiceProviderInfo::first();
         $product = Product::select()->where('product_key', $request->productKey)
             ->with('service')
@@ -36,29 +22,26 @@ class ConsentController extends Controller
 
         $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
             ->post($url, [
-                'amount' => $request->amount,
+                'amount' => 5,
                 'currency' => "BDT",
-                'productDescription' => $request->productDescription,
+                'productDescription' => $product->description,
                 'subscriptionPeriod' => $request->subscriptionPeriod,
                 'urls' => [
-                    'ok' => $request->ok,
-                    'deny' => $request->deny,
-                    'error' => $request->error,
+                    'ok' => "ok",
+                    'deny' => "http://deny.com/deny_url_test",
+                    'error' => "http://error.com/error_url_test",
                 ],
                 'operatorId' => $serviceProviderInfo->operatorId,
                 'pinRequest' => [
                     'parameters' => [
-                        'serviceName' => $request->serviceName,
+                        'serviceName' => $product->service->name,
                     ]
                 ]
             ]);
 
-                // 'name',
-                // 'keyword',
-                // 'validity',
 
 
 
-        return $this->respondWithSuccess('Consent prepared successfully!', $product);
+        return $this->respondWithSuccess('Consent prepared successfully!', $response->json());
     }
 }

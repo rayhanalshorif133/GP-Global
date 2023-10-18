@@ -85,7 +85,7 @@
                     },
                     {
                         render: function(data, type, row) {
-                            return `<span>${row.charge} tk</span>`;
+                            return `<span>${row.amount} tk</span>`;
                         },
                         targets: 0,
                     },
