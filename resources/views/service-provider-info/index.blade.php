@@ -58,6 +58,13 @@
                                         placeholder="Enter operatorId" value="{{$serviceProviderInfo->operatorId}}">
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="purchaseCategoryCode" class="required">Purchase Category Code</label>
+                                    <input type="text" name="purchaseCategoryCode" id="purchaseCategoryCode" required class="form-control"
+                                        placeholder="Enter purchaseCategoryCode" value="{{$serviceProviderInfo->purchaseCategoryCode}}">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">

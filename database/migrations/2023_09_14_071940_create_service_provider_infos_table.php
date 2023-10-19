@@ -20,6 +20,7 @@ class CreateServiceProviderInfosTable extends Migration
             $table->string('password');
             $table->string('url');
             $table->string('operatorId');
+            $table->string('purchaseCategoryCode');
             $table->timestamps();
         });
         

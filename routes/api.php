@@ -24,7 +24,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::match(['get', 'post'], 'getToken/{keyword?}', [NDTVController::class, 'getToken'])->name('getToken');
 
 Route::post('consent/prepare', [ConsentController::class, 'prepare'])->name('consent.prepare');
-Route::post('partner/smsmessaging/{senderNumber}', [PartnerController::class, 'smsmessaging'])->name('partner.smsmessaging');
+
+Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
+    Route::post('smsmessaging/{senderNumber}', [PartnerController::class, 'smsmessaging'])->name('smsmessaging');
+    Route::get('smsmessaging/unsubscribe/{acr_key}', [PartnerController::class, 'partnerMsgUnsubscribe'])->name('partnerMsgUnsubscribe');
+    Route::post('payment/{acr_key}', [PartnerController::class, 'payment'])->name('payment');
+    
+});
+
 
 
 

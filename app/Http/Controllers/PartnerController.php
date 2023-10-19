@@ -9,6 +9,8 @@ class PartnerController extends Controller
     //
     // partnerMsgUnsubscribe
     public function partnerMsgUnsubscribe($acr_key){
+        
+          
         return $this->respondWithSuccess('partnerMsgUnsubscribe');
     }
 }

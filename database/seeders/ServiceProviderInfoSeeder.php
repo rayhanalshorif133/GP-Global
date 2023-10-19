@@ -21,6 +21,7 @@ class ServiceProviderInfoSeeder extends Seeder
         $serviceProviderInfo->password = 'vCHth06udnTiQBsllDA4KEg147wVqlIt';
         $serviceProviderInfo->url = 'https://api.dob-staging.telenordigital.com';
         $serviceProviderInfo->operatorId = 'GRA-BD';
+        $serviceProviderInfo->purchaseCategoryCode = 'Game';        
         $serviceProviderInfo->save();
     }
 }
