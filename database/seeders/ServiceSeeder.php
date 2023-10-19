@@ -19,7 +19,7 @@ class ServiceSeeder extends Seeder
         $service->name = 'Game Thief';
         $service->keyword = 'GT';
         $service->type = 'subscription';
-        $service->validity = 'daily';
+        $service->validity = 'P1D';
         $service->redirect_url = 'https://www.google.com/';
         $service->amount = 10.00;
         $service->save();

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ServiceProviderInfo;
 use App\Models\Service;
 use App\Models\PartnerSmsMessaging;
+use App\Models\PartnerPayment;
 use Illuminate\Support\Facades\Http;
 
 class PartnerController extends Controller
@@ -65,9 +66,14 @@ class PartnerController extends Controller
     // payment
     public function payment(Request $request, $acr_key)
     {
+        
         try {
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
+            $service = Service::select()->where('keyword', $request->service_keyword)->first();
+            if (!$service) {
+                return $this->respondWithError('Service not found');
+            }
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, [
                     "amountTransaction" => [
@@ -76,27 +82,44 @@ class PartnerController extends Controller
                         "referenceCode" => $request->referenceCode, // "REF-1234567890987654321"
                         "paymentAmount" => [
                             "chargingInformation" => [
-                                "amount" => 5,
+                                "amount" => $service->amount,
                                 "description" => [
-                                    "Game Thief"
+                                    $service->name
                                 ],
                                 "currency" => "BDT"
                             ],
                             "chargingMetaData" => [
-                                "purchaseCategoryCode" => "Game",
+                                "purchaseCategoryCode" => $serviceProviderInfo->purchaseCategoryCode,
                                 "mandateId" => [
-                                    "subscription" => "123456789",
-                                    "subscriptionPeriod" => "P1D",
+                                    "subscription" => $request->mandateId_subscription_num,
+                                    "subscriptionPeriod" => $service->validity,
                                     "consentId" => $request->consentId
                                 ]
                             ]
                         ],
-                        "operatorId" => "GRA-BD"
+                        "operatorId" => $serviceProviderInfo->operatorId
                     ]
                 ]);
                 
 
             $responseData = $response->json();
+            // requestError
+            if (isset($responseData['requestError'])) {
+                return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
+            }
+
+
+            $partnerPayment = new PartnerPayment();
+            $partnerPayment->acr_key = $acr_key;
+            $partnerPayment->referenceCode = $request->referenceCode;
+            $partnerPayment->service_keyword = $request->service_keyword;
+            $partnerPayment->mandateId_subscription_num = $request->mandateId_subscription_num;
+            $partnerPayment->consentId = $request->consentId;
+            $partnerPayment->response = json_encode($responseData);
+            $partnerPayment->save();
+            
+
+
             return $this->respondWithSuccess('smsmessaging', $responseData);
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());

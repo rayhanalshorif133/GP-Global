@@ -38,17 +38,17 @@
                                     <label for="updateValidity" class="required">Service validity</label>
                                     <select class="form-control" name="validity" required id="updateValidity">
                                         <option value="" selected disabled>Select validity</option>
-                                        <option value="daily">Daily</option>
-                                        <option value="weekly">Weekly</option>
-                                        <option value="monthly">Monthly</option>
+                                        <option value="P1D">Daily</option>
+                                        <option value="P7D">Weekly</option>
+                                        <option value="P30D">Monthly</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="updateCharge" class="required">Service charge</label>
-                                    <input type="number" name="charge" id="updateCharge" required class="form-control"
-                                        placeholder="Enter Service charge">                                    
+                                    <label for="updateAmount" class="required">Service amount</label>
+                                    <input type="number" name="charge" id="updateAmount" required class="form-control"
+                                        placeholder="Enter service amount">                                    
                                 </div>
                             </div>
                             <div class="col-md-6">

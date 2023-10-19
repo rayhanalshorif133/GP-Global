@@ -79,7 +79,8 @@
                     },
                     {
                         render: function(data, type, row) {
-                            return row.validity;
+                            var validity = row.validity == 'P1D' ? "Daily" : row.validity == 'P7D' ? "Weekly" : "Monthly";
+                            return validity;
                         },
                         targets: 0,
                     },

@@ -37,9 +37,9 @@
                                     <label for="validity" class="required">Service validity</label>
                                     <select class="form-control" name="validity" required id="validity">
                                         <option value="" selected disabled>Select validity</option>
-                                        <option value="daily">Daily</option>
-                                        <option value="weekly">Weekly</option>
-                                        <option value="monthly">Monthly</option>
+                                        <option value="P1D">Daily</option>
+                                        <option value="P7D">Weekly</option>
+                                        <option value="P30D">Monthly</option>
                                     </select>
                                 </div>
                             </div>
