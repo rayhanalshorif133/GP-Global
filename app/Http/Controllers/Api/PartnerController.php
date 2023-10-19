@@ -18,16 +18,14 @@ class PartnerController extends Controller
 
         $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $senderNumber .'/requests';
 
-        $service = Service::select()->where('keyword', $request->service_keyword)->frist();
+        $service = Service::select()->where('keyword', $request->service_keyword)->first();
+
+        if(!$service){
+            return $this->respondWithError('Service not found');
+        }
+
+        $urlLink = env('APP_URL') . '/partner/smsmessaging/unsubscribe/' . $request->acr_key;
         
-        
-        // {"outboundSMSMessageRequest":
-        //     {"address":"acr:TESTRCbkZ1G0280XyRk4PX2XR1TaTER",
-        //      "senderAddress":"tel:+8801323174104",
-        //      "messageType":"ARN",
-        //      "outboundSMSTextMessage":{"message":"{ServiceName} পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে {amount} + 16% TAX (VAT,SC) টাকা/{Period} হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে {URLLink} এ প্রবেশ করুন।"},
-        //      "senderName":"22900"}
-        //   }
         $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
             ->post($url, [
                 'outboundSMSMessageRequest' => 
@@ -37,14 +35,14 @@ class PartnerController extends Controller
                     'messageType' => 'ARN',
                     'outboundSMSTextMessage' => 
                     [
-                        'message' => '{ServiceName} পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে {amount} + 16% TAX (VAT,SC) টাকা/{Period} হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে {URLLink} এ প্রবেশ করুন।'
+                        'message' => $service->name  . 'পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে '. $service->amount .'+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে' . $urlLink . 'এ প্রবেশ করুন।'
                     ],
                     'senderName' => '22900'
                     
                 ]
             ]);
         $responseData = $response->json();
-        return $this->respondWithSuccess('smsmessaging', $responseData);
+        return $this->respondWithSuccess('smsmessaging', $service);
 
     }
 }

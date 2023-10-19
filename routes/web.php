@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ConsentController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\ServiceProviderInfoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,12 @@ Route::prefix('consent/prepare/')
         Route::get('error', [ConsentController::class, 'consentPrepareError'])->name('error');    
 });
 
+
+Route::prefix('partner/smsmessaging/')
+    ->name('partner.smsmessaging.')
+    ->group(function () {
+        Route::get('unsubscribe/{acr_key}', [PartnerController::class, 'partnerMsgUnsubscribe'])->name('unsubscribe');
+    });
 
 
 
