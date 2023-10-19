@@ -103,7 +103,7 @@ class PartnerController extends Controller
                 
 
             $responseData = $response->json();
-            // requestError
+            // request Error
             if (isset($responseData['requestError'])) {
                 return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
             }
@@ -119,6 +119,7 @@ class PartnerController extends Controller
             $partnerPayment->save();
             
 
+            
 
             return $this->respondWithSuccess('smsmessaging', $responseData);
         } catch (\Throwable $th) {
