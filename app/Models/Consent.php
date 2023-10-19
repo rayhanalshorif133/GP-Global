@@ -8,4 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Consent extends Model
 {
     use HasFactory;
+    
+
+    protected $fillable = [
+        'product_id',
+        'amount',
+        'currency',
+        'subscriptionPeriod',
+        'urls',
+        'serviceName',
+        'response',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

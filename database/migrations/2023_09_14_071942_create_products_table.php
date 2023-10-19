@@ -23,9 +23,11 @@ class CreateProductsTable extends Migration
             $table->string('description')->nullable();           
             $table->timestamps();
         });
-        
+
         $dbSeeder = new DatabaseSeeder();
         $dbSeeder->run();
+        
+       
     }
 
     /**

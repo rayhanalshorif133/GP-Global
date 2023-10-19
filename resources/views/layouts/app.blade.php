@@ -9,7 +9,7 @@
             {{ $title }}
             |    
         @endisset
-        GP Digital
+        {{env('APP_NAME')}}
     </title>
 
     <!-- Google Font: Source Sans Pro -->

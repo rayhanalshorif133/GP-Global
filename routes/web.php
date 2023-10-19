@@ -4,6 +4,7 @@ use App\Http\Controllers\HitLogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\ServiceProviderInfoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,14 @@ Route::resource('service-provider-info', ServiceProviderInfoController::class);
 Route::resource('product', ProductController::class);
 
 
+// consent/prepare
+Route::prefix('consent/prepare/')
+    ->name('consent.prepare.')
+    ->group(function () {
+        Route::get('success', [ConsentController::class, 'consentPrepareSuccess'])->name('success');
+        Route::get('deny', [ConsentController::class, 'consentPrepareDeny'])->name('deny');
+        Route::get('error', [ConsentController::class, 'consentPrepareError'])->name('error');    
+});
 
 
 
