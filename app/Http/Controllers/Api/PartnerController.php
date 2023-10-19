@@ -8,6 +8,7 @@ use App\Models\ServiceProviderInfo;
 use App\Models\Service;
 use App\Models\PartnerSmsMessaging;
 use App\Models\PartnerPayment;
+use App\Models\InvalidAcrs;
 use Illuminate\Support\Facades\Http;
 
 class PartnerController extends Controller
@@ -66,7 +67,7 @@ class PartnerController extends Controller
     // payment
     public function payment(Request $request, $acr_key)
     {
-        
+
         try {
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
@@ -100,7 +101,7 @@ class PartnerController extends Controller
                         "operatorId" => $serviceProviderInfo->operatorId
                     ]
                 ]);
-                
+
 
             $responseData = $response->json();
             // request Error
@@ -117,11 +118,38 @@ class PartnerController extends Controller
             $partnerPayment->consentId = $request->consentId;
             $partnerPayment->response = json_encode($responseData);
             $partnerPayment->save();
-            
 
-            
+
+
 
             return $this->respondWithSuccess('smsmessaging', $responseData);
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Something went wrong...!', $th->getMessage());
+        }
+    }
+
+    // invalidAcrs
+    public function invalidAcrs($acr_key)
+    {
+        try {
+            $serviceProviderInfo = ServiceProviderInfo::first();
+            $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key;
+
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->delete($url);
+
+
+            $responseData = $response->json();
+            // request Error
+            if (isset($responseData['requestError'])) {
+                return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
+            }
+
+            $invalidAcrs = new InvalidAcrs();
+            $invalidAcrs->acr_key = $acr_key;
+            $invalidAcrs->response = json_encode($responseData);
+            $invalidAcrs->save();
+
+            return $this->respondWithSuccess('Acr Invalidated', $responseData);
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }

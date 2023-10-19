@@ -11,11 +11,21 @@ use App\Models\Product;
 
 class ConsentController extends Controller
 {
-    public function prepare(Request $request)
+    public function prepare($subscriptionPeriod = null, $productKey = null,Request $request)
     {
 
+        // requested method
+        $method = $request->method();
+        
+        $getSubscriptionPeriod = $method == "POST" ? $request->subscriptionPeriod : $subscriptionPeriod;
+        $getProductKey = $method == "POST" ? $request->productKey : $productKey;
+        
+
+
+        
+
         $serviceProviderInfo = ServiceProviderInfo::first();
-        $product = Product::select()->where('product_key', $request->productKey)
+        $product = Product::select()->where('product_key', $getProductKey)
             ->with('service')
             ->first();
 
@@ -33,7 +43,7 @@ class ConsentController extends Controller
                 'amount' => $product->service->amount,
                 'currency' => "BDT",
                 'productDescription' => $product->description,
-                'subscriptionPeriod' => $request->subscriptionPeriod,
+                'subscriptionPeriod' => $getSubscriptionPeriod,
                 'urls' => $urls,
                 'operatorId' => $serviceProviderInfo->operatorId,
                 'pinRequest' => [
