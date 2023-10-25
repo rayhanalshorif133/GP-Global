@@ -11,7 +11,7 @@ use App\Models\Product;
 
 class ConsentController extends Controller
 {
-    public function prepare($subscriptionPeriod = null, $productKey = null,Request $request)
+    public function prepare($subscriptionPeriod = null, $productKey = null, $msisdn = null ,Request $request)
     {
 
         // requested method
@@ -19,6 +19,7 @@ class ConsentController extends Controller
         
         $getSubscriptionPeriod = $method == "POST" ? $request->subscriptionPeriod : $subscriptionPeriod;
         $getProductKey = $method == "POST" ? $request->productKey : $productKey;
+        $msisdn = $method == "POST" ? $request->msisdn : $msisdn;
         
 
 
@@ -42,6 +43,7 @@ class ConsentController extends Controller
             ->post($url, [
                 'amount' => $product->service->amount,
                 'currency' => "BDT",
+                'msisdn' => $msisdn,
                 'productDescription' => $product->description,
                 'subscriptionPeriod' => $getSubscriptionPeriod,
                 'urls' => $urls,

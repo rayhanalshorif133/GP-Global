@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::group(['prefix' => 'consent', 'name' => 'consent.'], function () {
-    Route::match(['get', 'post'], 'prepare/{subscriptionPeriod?}/{productKey?}', [ConsentController::class, 'prepare'])
+    Route::match(['get', 'post'], 'prepare/{subscriptionPeriod?}/{productKey?}/{msisdn?}', [ConsentController::class, 'prepare'])
     ->name('consent.prepare');
 });
 
