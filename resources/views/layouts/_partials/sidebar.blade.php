@@ -111,6 +111,12 @@
                         </li> --}}
                     </ul>
                 </li>
+                <li class="nav-item @if ($routeName == 'api.index') menu-is-opening menu-open @endif ">
+                    <a href="{{route('api.index')}}" class="nav-link @if($routeName == 'api.index') active @endif">
+                        <i class="nav-icon fa-solid fa-paper-plane"></i>
+                        <p> Api documentations  </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

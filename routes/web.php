@@ -6,6 +6,8 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\ApiController;
+
 use App\Http\Controllers\ServiceProviderInfoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -81,5 +83,7 @@ Route::prefix('hit_log')
         Route::get('sent/{id?}', [HitLogController::class, 'sent'])->name('sent');
         Route::get('received', [HitLogController::class, 'received'])->name('received');
     });
+
+Route::get('api', [ApiController::class, 'index'])->name('api.index');
 
 
