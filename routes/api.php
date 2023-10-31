@@ -20,14 +20,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// getToken Method only supports GET and POST
-// Route::match(['get', 'post'], 'getToken/{keyword?}', [NDTVController::class, 'getToken'])->name('getToken');
+// customer ref:
+// 55rmQvayRFfROCS005P3VAJIAh0ecthY
+
+// "consentId":"92515f69-0a4d-485f-8e20-f386955ea731"
+
 
 
 Route::group(['prefix' => 'consent', 'name' => 'consent.'], function () {
-    Route::match(['get', 'post'], 'prepare/{subscriptionPeriod?}/{productKey?}/{msisdn?}', [ConsentController::class, 'prepare'])
+    Route::match(['get', 'post'], 'prepare/{subscriptionPeriod}/{productKey}/{msisdn}', [ConsentController::class, 'prepare'])
     ->name('consent.prepare');
 });
+
+
 
 
 Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {

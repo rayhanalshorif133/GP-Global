@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Http;
 
 class PartnerController extends Controller
 {
+
+    // getAcrs
+
+    public function getAcrs(){
+        return "getAcrs";
+    }
+
     // smsmessaging
     public function smsmessaging(Request $request, $senderNumber)
     {

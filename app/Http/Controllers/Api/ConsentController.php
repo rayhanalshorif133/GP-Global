@@ -43,7 +43,7 @@ class ConsentController extends Controller
             ->post($url, [
                 'amount' => $product->service->amount,
                 'currency' => "BDT",
-                'msisdn' => $msisdn,
+                'MSISDN' => $msisdn,
                 'productDescription' => $product->description,
                 'subscriptionPeriod' => $getSubscriptionPeriod,
                 'urls' => $urls,
@@ -55,6 +55,7 @@ class ConsentController extends Controller
                 ]
             ]);
         $responseData = $response->json();
+
         
        
         if ($responseData['resultCode'] == "SUCCESS") {

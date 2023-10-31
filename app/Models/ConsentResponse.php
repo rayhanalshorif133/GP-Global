@@ -5,22 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Consent extends Model
+class ConsentResponse extends Model
 {
     use HasFactory;
-    
 
     protected $fillable = [
-        'product_id',
-        'amount',
-        'msisdn',
-        'currency',
-        'subscriptionPeriod',
-        'urls',
-        'serviceName',
+        'consent_id',
         'customer_reference',
         'consentId',
-        'response',
     ];
 
     public function product()
