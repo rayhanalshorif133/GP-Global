@@ -31,13 +31,13 @@ class ConsentController extends Controller
 
             // send notification by sms to the client
             // $url = url('api/partner/smsmessaging') . '/' . $consent->msisdn; 
-            $url = url('api/check') . '?' . $consent->msisdn; 
+            $url = url('api/check') . '?msisdn=' . $consent->msisdn; 
+            return redirect($url);
             // $res = Http::post($url, [
             //     'service_keyword' => $request->serviceKeyword,
             //     'acr_key' => $request->customerReference,
             //     'senderName' => $serviceProviderInfo->senderName,
             //     ]);
-            dd($url);
 
             return $this->respondWithSuccess('Consent prepared successfully!',$res);
         }else{

@@ -44,8 +44,13 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
 
 
 Route::get('check', function(){
-    return response()->json("hello");
+    return response()->json([
+        'name' => 'Abigail',
+        'state' => 'CA',
+    ]);
+    
 })->name('check-scnsjnckds');
+
 
 
 
