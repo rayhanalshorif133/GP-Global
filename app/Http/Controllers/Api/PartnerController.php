@@ -23,6 +23,7 @@ class PartnerController extends Controller
     // smsmessaging
     public function smsmessaging(Request $request, $senderNumber)
     {
+
         try {
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $senderNumber . '/requests';

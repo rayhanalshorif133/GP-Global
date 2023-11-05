@@ -61,6 +61,7 @@ class ConsentController extends Controller
         if ($responseData['resultCode'] == "SUCCESS") {
             $consent = new Consent();
             $consent->product_id = $product->id;
+            $consent->msisdn = $msisdn;
             $consent->amount = $product->service->amount;
             $consent->currency = "BDT";
             $consent->subscriptionPeriod = $request->subscriptionPeriod;
