@@ -12,14 +12,15 @@ class ConsentController extends Controller
     public function consentPrepareSuccess(Request $request)
     {
 
-        // has customer reference
-        $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
 
-        if($customer_reference){
-            return $this->respondWithError('Consent already subscribed.');
-        }
+        // has customer reference
+        // $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
+
+        // if($customer_reference){
+        //     return $this->respondWithError('Consent already subscribed.');
+        // }
         
-        // http://localhost:3000/consent/prepare/success?customerReference=55rmQvayRFfR0CS0NcGFXvfHUFeOkofc&consentId=c7f59c7d-117f-4217-9cd9-12c0916a60c6
+        // http://127.0.0.1:8000/consent/prepare/success?customerReference=55rmQvayRFfR0CS0utPQGqbsJy8dpnFK&consentId=c7f59c7d-117f-4217-9cd9-12c0916a60c6
         // get last create consent
         $consent = Consent::latest()->first();
         $serviceProviderInfo = ServiceProviderInfo::first();
@@ -29,14 +30,18 @@ class ConsentController extends Controller
             $consent->save();
 
             // send notification by sms to the client
-            $url = "api/partner/smsmessaging/" . $consent->msisdn; 
+            // $url = url('api/partner/smsmessaging') . '/' . $consent->msisdn; 
+            $url = url('api/check') . '?' . $consent->msisdn; 
+            // $res = Http::post($url, [
+            //     'service_keyword' => $request->serviceKeyword,
+            //     'acr_key' => $request->customerReference,
+            //     'senderName' => $serviceProviderInfo->senderName,
+            //     ]);
+            dd($url);
 
-            Http::post($url, [
-                'service_keyword' => $request->serviceKeyword,
-                'acr_key' => $request->customerReference,
-                'senderName' => $serviceProviderInfo->senderName,
-            ]);
-            return $this->respondWithSuccess('Consent prepared successfully!');
+            return $this->respondWithSuccess('Consent prepared successfully!',$res);
+        }else{
+            return $this->respondWithError('Consent prepared failed!');
         }
     }
 

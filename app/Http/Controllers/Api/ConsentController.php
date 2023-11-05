@@ -75,4 +75,8 @@ class ConsentController extends Controller
             return $this->respondWithError($responseData['resultDescription']);
         }
     }
+
+    public function check(){
+        return "hello";
+    }
 }

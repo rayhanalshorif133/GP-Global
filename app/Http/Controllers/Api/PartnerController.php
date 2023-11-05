@@ -23,6 +23,7 @@ class PartnerController extends Controller
     // smsmessaging
     public function smsmessaging(Request $request, $senderNumber)
     {
+        return $this->respondWithError('Something went wrong...!', $senderNumber);
 
         try {
             $serviceProviderInfo = ServiceProviderInfo::first();
@@ -56,7 +57,7 @@ class PartnerController extends Controller
             }
 
             $partnerSmsMessaging = new PartnerSmsMessaging();
-            $partnerSmsMessaging->senderNumber = $request->senderNumber;
+            $partnerSmsMessaging->senderNumber = $senderNumber;
             $partnerSmsMessaging->service_keyword = $request->service_keyword;
             $partnerSmsMessaging->acr_key = $request->acr_key;
             $partnerSmsMessaging->senderName = $request->senderName;
