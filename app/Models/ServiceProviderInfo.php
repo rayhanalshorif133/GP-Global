@@ -16,7 +16,7 @@ class ServiceProviderInfo extends Model
         'password',
         'url',
         'operatorId',
-        'purchaseCategoryCode',
+        'senderName',
     ];
 
 

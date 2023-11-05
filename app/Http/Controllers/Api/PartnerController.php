@@ -31,7 +31,7 @@ class PartnerController extends Controller
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
-            $urlLink = env('APP_URL') . '/partner/smsmessaging/unsubscribe/' . $request->acr_key;
+            $urlLink = url('partner/smsmessaging/unsubscribe/') . $request->acr_key;
             $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে' . $urlLink . 'এ প্রবেশ করুন।';
 
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
@@ -114,7 +114,7 @@ class PartnerController extends Controller
             $responseData = $response->json();
             // request Error
             if (isset($responseData['requestError'])) {
-                return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
+                return $this->respondWithError("error.!!", $responseData);
             }
 
 

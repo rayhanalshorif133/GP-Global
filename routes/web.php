@@ -42,7 +42,6 @@ Route::get('clear', function () {
 });
 
 Route::get('/', function () {
-    // return view('welcome');
     if(Auth::check()){
         return redirect()->route('dashboard');
     }else{
@@ -57,6 +56,7 @@ Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 Route::resource('service', ServiceController::class);
 Route::resource('service-provider-info', ServiceProviderInfoController::class);
 Route::resource('product', ProductController::class);
+
 
 
 // consent/prepare
