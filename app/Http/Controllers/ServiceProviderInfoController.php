@@ -34,7 +34,7 @@ class ServiceProviderInfoController extends Controller
         $serviceProviderInfo->password = $request->password;
         $serviceProviderInfo->url = $request->url;
         $serviceProviderInfo->operatorId = $request->operatorId;
-        $serviceProviderInfo->purchaseCategoryCode = $request->purchaseCategoryCode;
+        $serviceProviderInfo->senderName = $request->senderName;
         $serviceProviderInfo->save();
         flash()->addSuccess('Service Provider Info updated successfully!');
         return redirect()->back();

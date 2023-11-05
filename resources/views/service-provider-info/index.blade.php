@@ -60,9 +60,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="purchaseCategoryCode" class="required">Purchase Category Code</label>
-                                    <input type="text" name="purchaseCategoryCode" id="purchaseCategoryCode" required class="form-control"
-                                        placeholder="Enter purchaseCategoryCode" value="{{$serviceProviderInfo->purchaseCategoryCode}}">
+                                    <label for="senderName" class="required">Sender Name or Code</label>
+                                    <input type="text" name="senderName" id="senderName" required class="form-control"
+                                        placeholder="Enter senderName" value="{{$serviceProviderInfo->senderName}}">
                                 </div>
                             </div>
                         </div>

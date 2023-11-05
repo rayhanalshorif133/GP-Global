@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Consent;
+use App\Models\ServiceProviderInfo;
 use Illuminate\Support\Facades\Http;
 
 class ConsentController extends Controller
@@ -14,13 +15,14 @@ class ConsentController extends Controller
         // has customer reference
         $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
 
-        // if($customer_reference){
-        //     // return view('consent.prepare.already_done');
+        if($customer_reference){
+            return $this->respondWithError('Consent already subscribed.');
+        }
+        
         // http://localhost:3000/consent/prepare/success?customerReference=55rmQvayRFfR0CS0NcGFXvfHUFeOkofc&consentId=c7f59c7d-117f-4217-9cd9-12c0916a60c6
-        // }
-
         // get last create consent
         $consent = Consent::latest()->first();
+        $serviceProviderInfo = ServiceProviderInfo::first();
         if($consent){
             $consent->customer_reference = $request->customerReference;
             $consent->consentId = $request->consentId;
@@ -32,10 +34,10 @@ class ConsentController extends Controller
             Http::post($url, [
                 'service_keyword' => $request->serviceKeyword,
                 'acr_key' => $request->customerReference,
-                'senderName' => $request->senderName,
+                'senderName' => $serviceProviderInfo->senderName,
             ]);
+            return $this->respondWithSuccess('Consent prepared successfully!');
         }
-        return $this->respondWithSuccess('Consent prepared successfully!',$url);
     }
 
     public function consentPrepareDeny(Request $request)

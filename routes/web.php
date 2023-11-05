@@ -26,10 +26,7 @@ use Illuminate\Support\Facades\Artisan;
 */
 
 Route::get('clear', function () {
-//     php artisan view:clear 
-// php artisan cache:clear
-// php artisan route:clear
-// php artisan config:clear
+    
     Artisan::call('view:clear');
     Artisan::call('cache:clear');
     Artisan::call('route:clear');
