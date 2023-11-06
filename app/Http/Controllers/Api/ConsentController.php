@@ -66,7 +66,7 @@ class ConsentController extends Controller
             $consent->currency = "BDT";
             $consent->subscriptionPeriod = $request->subscriptionPeriod;
             $consent->urls = json_encode($urls);
-            $consent->serviceName = $product->service->name;
+            $consent->service_id = $product->service_id;
             $consent->response = json_encode($responseData);
             $consent->save();
             return redirect($responseData['url']);

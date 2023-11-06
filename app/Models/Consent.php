@@ -12,12 +12,12 @@ class Consent extends Model
 
     protected $fillable = [
         'product_id',
+        'service_id',
         'amount',
         'msisdn',
         'currency',
         'subscriptionPeriod',
         'urls',
-        'serviceName',
         'customer_reference',
         'consentId',
         'response',
@@ -26,5 +26,10 @@ class Consent extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 }
