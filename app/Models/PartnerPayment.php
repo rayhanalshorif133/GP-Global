@@ -13,7 +13,7 @@ class PartnerPayment extends Model
         'acr_key',
         'referenceCode',
         'service_keyword',
-        'mandateId_subscription_num',
+        'subscription',
         'consentId',
         'response',
     ];

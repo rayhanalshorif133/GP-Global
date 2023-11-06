@@ -37,17 +37,10 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
     Route::get('smsmessaging/{senderNumber}', [PartnerController::class, 'smsmessaging'])->name('smsmessaging');
     Route::get('smsmessaging/unsubscribe/{acr_key}', [PartnerController::class, 'partnerMsgUnsubscribe'])->name('partnerMsgUnsubscribe');
     Route::post('payment/{acr_key}', [PartnerController::class, 'payment'])->name('payment');
-    Route::delete('/acrs/{acr_key}', [PartnerController::class, 'invalidAcrs'])->name('invalidAcrs');
+    Route::get('/acrs/unsubscribe/{acr_key}', [PartnerController::class, 'invalidAcrs'])->name('invalidAcrs');
 });
 
 
-Route::get('check', function(){
-    return response()->json([
-        'name' => 'Abigail',
-        'state' => 'CA',
-    ]);
-    
-})->name('check-scnsjnckds');
 
 
 

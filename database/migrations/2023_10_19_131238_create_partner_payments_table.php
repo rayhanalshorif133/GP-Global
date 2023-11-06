@@ -18,7 +18,7 @@ class CreatePartnerPaymentsTable extends Migration
             $table->string('acr_key');
             $table->string('referenceCode');
             $table->string('service_keyword');
-            $table->string('mandateId_subscription_num');
+            $table->string('subscription');
             $table->string('consentId');
             $table->json('response');
             $table->timestamps();
