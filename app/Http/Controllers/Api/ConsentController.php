@@ -70,7 +70,6 @@ class ConsentController extends Controller
             $consent->response = json_encode($responseData);
             $consent->save();
             return redirect($responseData['url']);
-            // return $this->respondWithSuccess('Consent prepared successfully!', $responseData);
         } else {
             return $this->respondWithError($responseData['resultDescription']);
         }

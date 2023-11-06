@@ -23,12 +23,12 @@ class PartnerController extends Controller
     // smsmessaging
     public function smsmessaging(Request $request, $senderNumber)
     {
-        return $this->respondWithError('Something went wrong...!', $senderNumber);
+        
 
         try {
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $senderNumber . '/requests';
-            $service = Service::select()->where('keyword', $request->service_keyword)->first();
+            $service = Service::select()->where('keyword', $request->serviceKeyword)->first();
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
@@ -58,7 +58,7 @@ class PartnerController extends Controller
 
             $partnerSmsMessaging = new PartnerSmsMessaging();
             $partnerSmsMessaging->senderNumber = $senderNumber;
-            $partnerSmsMessaging->service_keyword = $request->service_keyword;
+            $partnerSmsMessaging->service_keyword = $request->serviceKeyword;
             $partnerSmsMessaging->acr_key = $request->acr_key;
             $partnerSmsMessaging->senderName = $request->senderName;
             $partnerSmsMessaging->messageType = 'ARN';

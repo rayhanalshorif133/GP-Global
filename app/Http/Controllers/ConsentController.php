@@ -12,34 +12,26 @@ class ConsentController extends Controller
     public function consentPrepareSuccess(Request $request)
     {
 
+        // https://gpglobal.technical-content.xyz/consent/prepare/success?customerReference=55rmQvayRFfR0CS0UzeC2r7t1BLRvEI5&consentId=1ca35b58-4872-446e-8b01-12184c0eb9ed
+
 
         // has customer reference
-        // $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
+        $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
 
-        // if($customer_reference){
-        //     return $this->respondWithError('Consent already subscribed.');
-        // }
+        if($customer_reference){
+            return $this->respondWithError('Consent already subscribed.');
+        }
         
-        // http://127.0.0.1:8000/consent/prepare/success?customerReference=55rmQvayRFfR0CS0utPQGqbsJy8dpnFK&consentId=c7f59c7d-117f-4217-9cd9-12c0916a60c6
         // get last create consent
-        $consent = Consent::latest()->first();
+        $consent = Consent::latest()->with('service')->first();
         $serviceProviderInfo = ServiceProviderInfo::first();
         if($consent){
             $consent->customer_reference = $request->customerReference;
             $consent->consentId = $request->consentId;
             $consent->save();
-
-            // send notification by sms to the client
-            // $url = url('api/partner/smsmessaging') . '/' . $consent->msisdn; 
-            $url = url('api/check') . '?serviceKeyword=' . $request->serviceKeyword . '&acr_key=' . $request->customerReference . '&senderName=' . $serviceProviderInfo->senderName; 
+            
+            $url = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $consent->service->keyword . '&acr_key=' . $request->customerReference . '&senderName=' . $serviceProviderInfo->senderName; 
             return redirect($url);
-            // $res = Http::post($url, [
-            //     'service_keyword' => $request->serviceKeyword,
-            //     'acr_key' => $request->customerReference,
-            //     'senderName' => $serviceProviderInfo->senderName,
-            //     ]);
-
-            return $this->respondWithSuccess('Consent prepared successfully!',$res);
         }else{
             return $this->respondWithError('Consent prepared failed!');
         }
