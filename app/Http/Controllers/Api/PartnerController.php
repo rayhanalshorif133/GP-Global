@@ -36,7 +36,7 @@ class PartnerController extends Controller
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
-            $urlLink = url('partner/smsmessaging/unsubscribe/') . $request->acr_key;
+            $urlLink = url('partner/smsmessaging/unsubscribe') . "/" . $request->acr_key;
             $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
 
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
@@ -177,25 +177,6 @@ class PartnerController extends Controller
 
 
             
-            // delete acr::start
-            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->delete($url);
-            
-            
-            $responseData = $response->json();
-            if (isset($responseData['requestError'])) {
-                return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
-            }
-            
-
-            $invalidAcrs = InvalidAcrs::updateOrCreate(
-                ['acr_key' => $acr_key],
-                [
-                    'acr_key' => $acr_key,
-                    'response' => json_encode($responseData)
-                ]
-            );
-            // delete acr::end
-            
             
             // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $consent->msisdn . '/requests';
@@ -233,7 +214,29 @@ class PartnerController extends Controller
             $subUnSubLog->status = 0;
             $subUnSubLog->opt_date = date('Y-m-d');
             $subUnSubLog->opt_time = date('H:i:s A');
-            $subUnSubLog->save();       
+            $subUnSubLog->save();     
+            
+            
+            // delete acr::start
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->delete($url);
+            
+            
+            $responseData = $response->json();
+            if (isset($responseData['requestError'])) {
+                return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
+            }
+            
+
+            $invalidAcrs = InvalidAcrs::updateOrCreate(
+                ['acr_key' => $acr_key],
+                [
+                    'acr_key' => $acr_key,
+                    'response' => json_encode($responseData)
+                ]
+            );
+            // delete acr::end
+            
+            
 
             return $this->respondWithSuccess('Acr Invalidated', $invalidAcrs);
         } catch (\Throwable $th) {
