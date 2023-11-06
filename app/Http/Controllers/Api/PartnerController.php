@@ -148,24 +148,21 @@ class PartnerController extends Controller
     // invalidAcrs
     public function invalidAcrs($acr_key)
     {
-        dd($acr_key);
         try {
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key;
+            $consent = Consent::select()->where('customer_reference', $acr_key)->first();
 
 
+            
+            // delete acr::start
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->delete($url);
-
-
+            
+            
             $responseData = $response->json();
-            // request Error
             if (isset($responseData['requestError'])) {
                 return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
             }
-
-
-
-            // send sms
             
 
             $invalidAcrs = InvalidAcrs::updateOrCreate(
@@ -175,6 +172,38 @@ class PartnerController extends Controller
                     'response' => json_encode($responseData)
                 ]
             );
+            // delete acr::end
+            
+            
+            // send sms::start
+            $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $consent->msisdn . '/requests';
+            $service = Service::select()->where('id', $consent->service_id)->first();
+            if (!$service) {
+                return $this->respondWithError('Service not found');
+            }
+            $msg = $service->name  . ' পরিষেবাটি সফলভাবে বন্ধ করে দেওয়া হয়েছে।';
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+                ->post($url, [
+                    'outboundSMSMessageRequest' =>
+                    [
+                        'address' => 'acr:' . $acr_key,
+                        'senderAddress' => 'tel:' . $consent->msisdn,
+                        'messageType' => 'ARN',
+                        'outboundSMSTextMessage' =>
+                        [
+                            'message' => $msg
+                        ],
+                        'senderName' => $serviceProviderInfo->senderName
+
+                    ]
+                ]);
+            $responseData = $response->json();
+            // requestError
+            if (isset($responseData['requestError'])) {
+                return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
+            }
+            // send sms::end
+
             
 
             return $this->respondWithSuccess('Acr Invalidated', $invalidAcrs);
