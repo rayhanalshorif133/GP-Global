@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Consent;
 use App\Models\ServiceProviderInfo;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Carbon;
 
 class ConsentController extends Controller
 {
@@ -18,7 +19,9 @@ class ConsentController extends Controller
         // has customer reference
         $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
 
+        
         if($customer_reference){
+            
             return $this->respondWithError('Consent already subscribed.');
         }
         
@@ -29,7 +32,6 @@ class ConsentController extends Controller
             $consent->customer_reference = $request->customerReference;
             $consent->consentId = $request->consentId;
             $consent->save();
-            
             $url = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $consent->service->keyword . '&acr_key=' . $request->customerReference . '&senderName=' . $serviceProviderInfo->senderName; 
             return redirect($url);
         }else{

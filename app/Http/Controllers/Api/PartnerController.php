@@ -10,7 +10,10 @@ use App\Models\PartnerSmsMessaging;
 use App\Models\PartnerPayment;
 use App\Models\InvalidAcrs;
 use App\Models\Consent;
+use App\Models\Subscriber;
+use App\Models\SubUnSubLog;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Carbon;
 
 class PartnerController extends Controller
 {
@@ -67,8 +70,27 @@ class PartnerController extends Controller
             $partnerSmsMessaging->response = json_encode($responseData);
             $partnerSmsMessaging->save();
 
-
-            return $this->respondWithSuccess('smsmessaging', $responseData);
+            // Subscriber::start
+            $subscriber = new Subscriber();
+            $subscriber->msisdn = $senderNumber;
+            $subscriber->opr = "GP";
+            $subscriber->status = 1;
+            $subscriber->service = $service->name;
+            $subscriber->subs_date = date('Y-m-d H:i:s A');
+            $subscriber->charge_status = "charged";
+            $subscriber->charge_date = date('Y-m-d H:i:s A');
+            $subscriber->save();
+            /*Subscriber log handle*/
+            $subUnSubLog = new SubUnSubLog();
+            $subUnSubLog->msisdn = $senderNumber;
+            $subUnSubLog->service = $service->name;
+            $subUnSubLog->status = 1;
+            $subUnSubLog->opt_date = date('Y-m-d');
+            $subUnSubLog->opt_time = date('H:i:s A');
+            $subUnSubLog->save();
+            // Subscriber::end
+            
+            return $this->respondWithSuccess('Your service has started successfully.',$subscriber);
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }
@@ -204,7 +226,14 @@ class PartnerController extends Controller
             }
             // send sms::end
 
-            
+            /*Subscriber log handle*/
+            $subUnSubLog = new SubUnSubLog();
+            $subUnSubLog->msisdn = $consent->msisdn;
+            $subUnSubLog->service = $service->name;
+            $subUnSubLog->status = 0;
+            $subUnSubLog->opt_date = date('Y-m-d');
+            $subUnSubLog->opt_time = date('H:i:s A');
+            $subUnSubLog->save();       
 
             return $this->respondWithSuccess('Acr Invalidated', $invalidAcrs);
         } catch (\Throwable $th) {
