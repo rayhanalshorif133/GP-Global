@@ -27,9 +27,14 @@ class PartnerController extends Controller
     // smsmessaging
     public function smsmessaging(Request $request, $senderNumber)
     {
-        
 
         try {
+
+             // sender number validation::start
+             $senderNumber = substr($senderNumber, -11);
+             $senderNumber = "+88" . $senderNumber;
+             // sender number validation::end
+
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $senderNumber . '/requests';
             $service = Service::select()->where('keyword', $request->serviceKeyword)->first();
@@ -242,5 +247,36 @@ class PartnerController extends Controller
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }
+    }
+
+    // sendSms
+    public function sendSms(Request $request){
+        $serviceProviderInfo = ServiceProviderInfo::first();
+            $url = $serviceProviderInfo->url . '/partner/acrs/' . $request->acr;
+
+
+            
+            
+            // send sms::start
+            $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $request->phone . '/requests';
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+                ->post($url, [
+                    'outboundSMSMessageRequest' =>
+                    [
+                        'address' => 'acr:55rmQvayRFfR0CS059O5ZSWQI0yX3SIz',
+                        'senderAddress' => 'tel:' . $request->phone,
+                        'messageType' => 'ARN',
+                        'outboundSMSTextMessage' =>
+                        [
+                            'message' => $request->msg,
+                        ],
+                        'senderName' => $serviceProviderInfo->senderName
+
+                    ]
+                ]);
+
+            $responseData = $response->json();
+
+            return $this->respondWithSuccess('Successfully send sms', $responseData);
     }
 }

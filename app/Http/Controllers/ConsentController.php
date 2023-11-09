@@ -21,13 +21,13 @@ class ConsentController extends Controller
 
         
         if($customer_reference){
-            
             return $this->respondWithError('Consent already subscribed.');
         }
         
         // get last create consent
         $consent = Consent::latest()->with('service')->first();
         $serviceProviderInfo = ServiceProviderInfo::first();
+
         if($consent){
             $consent->customer_reference = $request->customerReference;
             $consent->consentId = $request->consentId;
