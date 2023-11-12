@@ -104,13 +104,8 @@
                 ]
             });
             productEditBtnHandler();
-            serviceDeleteBtnHandler();
-            serviceShowBtnHandaler();
-
-            // get url
-            var searchValue = window.location.href?.split('?')[1]?.split('=')[1] ? window.location.href?.split('?')[1]?.split('=')[1] : '';
-            $('#serviceTableId_filter input').val(searchValue);
-            table.search(searchValue).draw();
+            productDeleteBtnHandler();
+            
         });
 
         const productEditBtnHandler = () => {
@@ -130,28 +125,8 @@
             });
         };
         
-        const serviceShowBtnHandaler = () => {
-            $(document).on('click', '.serviceShowBtn', function() {
-                const id = $(this).parent().attr('id');
-                console.log(id);
-                axios.get(`/service/${id}`)
-                .then(function(response) {
-                    const data = response.data.data;
-                    $(".show_service_name").text(data.name);
-                    $(".show_service_type").text(data.type);
-                    $(".show_service_validity").text(data.validity);
-                    $(".show_service_charge").text(data.charge);
-                    $(".show_purchase_category_code").text(data.purchase_category_code);
-                    $(".show_reference_code").text(data.reference_code);
-                    $(".show_channel").text(data.channel);
-                    $(".show_on_behalf_of").text(data.on_behalf_of);               
-                    $(".show_redirect_url").text(data.redirect_url);               
-                    $("#service-show").modal('show');
-                });
-            });
-        };
-        const serviceDeleteBtnHandler = () => {
-            $(document).on('click', '.serviceDeleteBtn', function() {
+        const productDeleteBtnHandler = () => {
+            $(document).on('click', '.productDeleteBtn', function() {
                 const id = $(this).parent().attr('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -163,7 +138,7 @@
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        axios.delete(`/service/${id}`)
+                        axios.delete(`/product/${id}`)
                             .then(function(response) {
                                 table.ajax.reload();
                             })

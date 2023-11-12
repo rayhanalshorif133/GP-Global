@@ -4,14 +4,15 @@
             <div class="modal-header">
                 <h4 class="modal-title">
                     <i class="fas fa-hammer mr-1"></i>
-                    Create New Product
+                    Update Product
                 </h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <form action="#" method="POST" enctype="multipart/form-data" id="productUpdateFrom">
+            <form action="#" method="POST"  id="productUpdateFrom">
                 @csrf
+                @method('PUT')
                 <div class="modal-body">
                     <div class="px-2">
                         <div class="row">

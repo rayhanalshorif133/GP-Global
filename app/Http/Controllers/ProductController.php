@@ -57,12 +57,38 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'service_id' => 'required',
+            'product_key' => 'required|unique:products,product_key,' . $id,
+        ]);
+
+        if($validator->fails()){
+            flash()->addError($validator->errors()->first());
+        }else{
+
+            $product = Product::select()->where('id',$id)->first();
+            $product->name = $request->name;
+            $product->service_id = $request->service_id;
+            $product->product_key = $request->product_key;
+            $product->description = $request->description ? $request->description : "No description";
+            $product->save();
+            flash()->addSuccess("Successfully update this product");
+        }
+        return redirect()->route('product.index');
     }
 
 
     public function destroy($id)
     {
-        //
+        try {
+            $product = Product::find($id);
+            $product->delete();
+            flash()->addSuccess('Product deleted successfully!');
+            return $this->respondWithSuccess('Product deleted successfully!');
+        } catch (\Throwable $th) {
+            flash()->addError('Something went wrong!');
+            return $this->respondWithError('Something went wrong!');
+        }
     }
 }
