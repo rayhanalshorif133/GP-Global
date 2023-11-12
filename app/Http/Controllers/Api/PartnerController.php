@@ -180,11 +180,15 @@ class PartnerController extends Controller
             $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key;
             $consent = Consent::select()->where('customer_reference', $acr_key)->first();
 
-
+             // sender number validation::start
+             $msisdn = substr($consent->msisdn, -11);
+             $msisdn = "+88" . $msisdn;
+             // sender number validation::end
             
             
             // send sms::start
-            $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $consent->msisdn . '/requests';
+            $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $msisdn . '/requests';
+
             $service = Service::select()->where('id', $consent->service_id)->first();
             if (!$service) {
                 return $this->respondWithError('Service not found');
@@ -195,7 +199,7 @@ class PartnerController extends Controller
                     'outboundSMSMessageRequest' =>
                     [
                         'address' => 'acr:' . $acr_key,
-                        'senderAddress' => 'tel:' . $consent->msisdn,
+                        'senderAddress' => 'tel:' . $msisdn,
                         'messageType' => 'ARN',
                         'outboundSMSTextMessage' =>
                         [
