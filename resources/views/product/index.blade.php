@@ -33,6 +33,7 @@
                         <th>Name</th>
                         <th>Service Name</th>
                         <th>description</th>
+                        <th>Prodcut Key</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -41,6 +42,8 @@
         </div>
     </div>
 </div>
+@include('product.create')
+@include('product.edit')
 @endsection
 
 {{-- scripts --}}
@@ -75,17 +78,20 @@
                     },
                     {
                         render: function(data, type, row) {
+                            return row.product_key;
+                        },
+                        targets: 0,
+                    },
+                    {
+                        render: function(data, type, row) {
                             const btns = `
                             <div class="btn-group" id="${row.id}">
-                                    <button type="button" class="btn btn-outline-success serviceShowBtn" data-toggle="modal"
-                                    data-target="#service-show">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-info serviceEditBtn" data-toggle="modal"
-                                    data-target="#service-edit">
+                                
+                                <button type="button" class="btn btn-outline-info productEditBtn" data-toggle="modal"
+                                    data-target="#product-edit">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-danger serviceDeleteBtn">
+                                <button type="button" class="btn btn-outline-danger productDeleteBtn">
                                     <i class="fa-solid fa-trash"></i>
                                     </button>
                             </div>
@@ -97,7 +103,7 @@
                     },
                 ]
             });
-            serviceEditBtnHandler();
+            productEditBtnHandler();
             serviceDeleteBtnHandler();
             serviceShowBtnHandaler();
 
@@ -107,27 +113,19 @@
             table.search(searchValue).draw();
         });
 
-        const serviceEditBtnHandler = () => {
-            $(document).on('click', '.serviceEditBtn', function() {
+        const productEditBtnHandler = () => {
+            $(document).on('click', '.productEditBtn', function() {
                 const id = $(this).parent().attr('id');
-                console.log(id);
-                axios.get(`/service/${id}/edit`)
+                axios.get(`/product/${id}/edit`)
                 .then(function(response) {
                     const data = response.data.data;
-                    $("#serviceUpdateFrom").attr('action', `/service/${id}`);
-                    const charge = parseFloat(data.charge);
-                    $("#serviceUpdateFrom input[name='name']").val(data.name);
-                    $("#serviceUpdateFrom select[name='type']").val(data.type);
-                    $("#serviceUpdateFrom select[name='validity']").val(data.validity);
-                    $("#updateCharge").val(charge);
-                    $("#serviceUpdateFrom input[name='purchase_category_code']").val(data.purchase_category_code);
-                    $("#serviceUpdateFrom input[name='reference_code']").val(data.reference_code);
-                    $("#serviceUpdateFrom input[name='channel']").val(data.channel);
-                    $("#serviceUpdateFrom input[name='on_behalf_of']").val(data.on_behalf_of);
-                    $("#serviceUpdateFrom input[name='redirect_url']").val(data.redirect_url);
-                    $("#serviceUpdateFrom input[name='keyword']").val(data.keyword);
-                    
-                    $("#service-update").modal('show');
+                    console.log(data);
+                    $("#productUpdateFrom").attr('action', `/product/${id}`);  
+                    $("#productUpdateFrom #update_name").val(data.name);                    
+                    $("#productUpdateFrom #update_service_id").val(data.service_id);                    
+                    $("#productUpdateFrom #update_keyword").val(data.product_key);                    
+                    $("#productUpdateFrom #update_description").val(data.description);                    
+                    $("#product-update").modal('show');
                 });
             });
         };
