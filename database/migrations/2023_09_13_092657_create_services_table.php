@@ -22,6 +22,8 @@ class CreateServicesTable extends Migration
             $table->string('validity')->enum('P1D', 'P7D', 'P30D')->default('P1D');
             $table->float('amount', 0, 8)->nullable();
             $table->string('redirect_url')->nullable();
+            $table->string('reference_code')->nullable();
+            $table->string('channel')->nullable();
             $table->timestamps();
         });
 

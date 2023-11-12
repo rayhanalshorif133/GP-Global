@@ -35,7 +35,7 @@ class ConsentController extends Controller
             $url = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $consent->service->keyword . '&acr_key=' . $request->customerReference . '&senderName=' . $serviceProviderInfo->senderName; 
             return redirect($url);
         }else{
-            return $this->respondWithError('Consent prepared failed!');
+            return $this->respondWithError('Consent prepared failed!' );
         }
     }
 

@@ -19,5 +19,7 @@ class Service extends Model
         'redirect_url',
         'amount',
         'validity',
+        'reference_code',
+        'channel',
     ];
 }

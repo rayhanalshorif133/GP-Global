@@ -159,11 +159,11 @@
                     $(".show_service_name").text(data.name);
                     $(".show_service_type").text(data.type);
                     $(".show_service_validity").text(data.validity);
-                    $(".show_service_charge").text(data.charge);
-                    $(".show_purchase_category_code").text(data.purchase_category_code);
-                    $(".show_reference_code").text(data.reference_code);
-                    $(".show_channel").text(data.channel);
-                    $(".show_on_behalf_of").text(data.on_behalf_of);               
+                    $(".show_service_charge").text(data.amount);
+                    const channel = data.channel? data.channel : "Not Set";
+                    const reference_code = data.reference_code? data.reference_code : "Not Set";
+                    $(".show_reference_code").text(reference_code);
+                    $(".show_channel").text(channel);
                     $(".show_redirect_url").text(data.redirect_url);               
                     $("#service-show").modal('show');
                 });
