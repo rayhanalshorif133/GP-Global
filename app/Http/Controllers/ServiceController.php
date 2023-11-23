@@ -12,7 +12,7 @@ class ServiceController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['serviceSubscription']]);
     }
 
     public function index()
@@ -149,5 +149,24 @@ class ServiceController extends Controller
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+
+    // serviceSubscription
+    public function serviceSubscription(Request $request){
+
+        if($request->phone_number == ""){
+            flash()->addError('Please input a phone number!'); 
+        }
+        
+        $service = Service::find($request->service_id);
+        if($service){
+            $url = url('api/consent/prepare') . "/" . $service->validity . "/P1/" . $request->phone_number;
+            return redirect($url);
+        }else{
+            flash()->addError('Service is not found!');
+        }
+        return redirect()->back();
+        
     }
 }

@@ -39,6 +39,9 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
     Route::post('payment/{acr_key}', [PartnerController::class, 'payment'])->name('payment');
     Route::get('/acrs/unsubscribe/{acr_key}', [PartnerController::class, 'invalidAcrs'])->name('invalidAcrs');
     Route::post('/send-sms', [PartnerController::class, 'sendSms'])->name('send-sms');
+    // renew
+    Route::get('renew/{acr_key}', [PartnerController::class, 'renew'])->name('renew');
+    Route::get('refund/{acr_key}', [PartnerController::class, 'refund'])->name('refund');
 });
 
 

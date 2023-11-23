@@ -6,6 +6,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\WebHomeController;
 use App\Http\Controllers\ApiController;
 
 use App\Http\Controllers\ServiceProviderInfoController;
@@ -38,13 +39,7 @@ Route::get('clear', function () {
     return 'Clear';
 });
 
-Route::get('/', function () {
-    if(Auth::check()){
-        return redirect()->route('dashboard');
-    }else{
-        return redirect()->route('login');
-    }
-});
+Route::get('/', [WebHomeController::class,'index'])->name('web.home');
 
 Auth::routes();
 
@@ -72,7 +67,9 @@ Route::prefix('partner/smsmessaging/')
         Route::get('unsubscribe/{acr_key}', [PartnerController::class, 'partnerMsgUnsubscribe'])->name('unsubscribe');
     });
 
-
+Route::get('renew/{acr_key}', [PartnerController::class, 'renew'])->name('acr_key.renew');
+Route::get('refund/{acr_key}', [PartnerController::class, 'refund'])->name('acr_key.refund');
+Route::get('unsubscribe/{acr_key}', [PartnerController::class, 'unsubscribe'])->name('acr_key.unsubscribe');
 
 Route::prefix('hit_log')
     ->name('hit_log.')
@@ -82,5 +79,12 @@ Route::prefix('hit_log')
     });
 
 Route::get('api', [ApiController::class, 'index'])->name('api.index');
+
+
+Route::prefix('service-subscription')
+->name('service.')
+->group(function () {
+    Route::post('/new', [ServiceController::class, 'serviceSubscription'])->name('subscription');
+});
 
 

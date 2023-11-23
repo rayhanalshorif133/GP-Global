@@ -140,17 +140,16 @@
                     if (result.isConfirmed) {
                         axios.delete(`/product/${id}`)
                             .then(function(response) {
-                                Swal.fire(
-                                    'Deleted!',
-                                    'Your file has been deleted.',
-                                    'success'
-                                )
                                 table.ajax.reload();
                             })
                             .catch(function(error) {
                                 console.log(error);
                             });
-                        
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
                     }else{
                         Swal.fire(
                             'Cancelled!',

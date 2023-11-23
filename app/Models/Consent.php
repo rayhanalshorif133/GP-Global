@@ -21,6 +21,7 @@ class Consent extends Model
         'customer_reference',
         'consentId',
         'response',
+        'is_subscription',
     ];
 
     public function product()

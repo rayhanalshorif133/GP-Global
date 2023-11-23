@@ -41,7 +41,7 @@ class PartnerController extends Controller
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
-            $urlLink = url('partner/smsmessaging/unsubscribe') . "/" . $request->acr_key;
+            $urlLink = url('unsubscribe') . "/" . $request->acr_key;
             $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
 
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
@@ -95,6 +95,7 @@ class PartnerController extends Controller
             $subUnSubLog->save();
             // Subscriber::end
             
+            // return view('consent.prepare.success');
             return $this->respondWithSuccess('Your service has started successfully.',$subscriber);
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
@@ -226,6 +227,10 @@ class PartnerController extends Controller
             $subUnSubLog->save();     
             
             
+            // $consent subscribe
+            $consent->is_subscription = 0;
+            $consent->save();
+
             // delete acr::start
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->delete($url);
             
@@ -255,7 +260,7 @@ class PartnerController extends Controller
 
     // sendSms
     public function sendSms(Request $request){
-        $serviceProviderInfo = ServiceProviderInfo::first();
+            $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/acrs/' . $request->acr;
 
 
@@ -282,5 +287,94 @@ class PartnerController extends Controller
             $responseData = $response->json();
 
             return $this->respondWithSuccess('Successfully send sms', $responseData);
+    }
+
+    // renew
+    // http://localhost:3000/api/partner/renew/55rmQvayRFfR0CS0KOntVYT0yERlgHVK
+    public function renew($acr_key){
+        $serviceProviderInfo = ServiceProviderInfo::first();
+        $consent = Consent::select()->where('customer_reference', $acr_key)->first();
+        $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key;
+        // sender number validation::start
+        $senderNumber = substr($consent->msisdn, -11);
+        $senderNumber = "+88" . $senderNumber;
+        // sender number validation::end
+        $service = Service::select()->where('id', $consent->service_id)->first();
+        $urlLink = url('unsubscribe') . "/" . $acr_key;
+
+
+        $url = $serviceProviderInfo->url . '/partner/acrs/'. $acr_key . '/renew';
+
+
+        $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->post($url);
+
+        $responseData = $response->json();
+
+
+        // send sms::start
+            $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $senderNumber . '/requests';
+            $msg = $service->name  . ' পরিষেবাটি পুনর্নবীকরণ হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+                ->post($url, [
+                    'outboundSMSMessageRequest' =>
+                    [
+                        'address' => 'acr:' . $acr_key,
+                        'senderAddress' => 'tel:' . $senderNumber,
+                        'messageType' => 'ARN',
+                        'outboundSMSTextMessage' =>
+                        [
+                            'message' => $msg,
+                        ],
+                        'senderName' => $serviceProviderInfo->senderName
+
+                    ]
+                ]);
+
+
+            $responseData = $response->json();
+
+        return $this->respondWithSuccess('Successfully renew', $acr_key);
+    }
+
+    // refund service
+    public function refund($acr_key){
+        $serviceProviderInfo = ServiceProviderInfo::first();
+        $consent = Consent::select()->where('customer_reference', $acr_key)->first();
+        $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . "/transactions/amount";
+        // sender number validation::start
+        $senderNumber = substr($consent->msisdn, -11);
+        $senderNumber = "+88" . $senderNumber;
+        // sender number validation::end
+        $service = Service::select()->where('id', $consent->service_id)->first();          
+
+        $postBody = [
+            "amountTransaction" => [
+                "endUserId" => $acr_key,
+                "paymentAmount" => [
+                    "chargingInformation" => [
+                        "amount" => $service->amount,
+                        "currency" => "BDT",
+                        "description" => "Product 1 des"
+                    ],
+                    "chargingMetaData" => [
+                        "purchaseCategoryCode" => "b2mtech-Game",
+                        "mandateId" => [
+                            "subscriptionPeriod" => $service->validity,
+                            "consentId" => $consent->consentId
+                        ]
+                    ]
+                ],
+                "referenceCode" => "REF-sdacsdacsdacsdacsdacsdacs",
+                "transactionOperationStatus" => "Charged",
+            ]
+        ];
+
+
+        $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+                ->post($url, $postBody);
+        
+        $response = json_decode($response, true);
+        
+        return $this->respondWithSuccess('Successfully refund', $response);
     }
 }

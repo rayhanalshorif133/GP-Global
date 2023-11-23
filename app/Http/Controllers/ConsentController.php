@@ -17,7 +17,10 @@ class ConsentController extends Controller
 
 
         // has customer reference
-        $customer_reference = Consent::select()->where('customer_reference', $request->customerReference)->first();
+        $customer_reference = Consent::select()
+            ->where('customer_reference', $request->customerReference)
+            ->where('is_subscription', 1)
+            ->first();
 
         
         if($customer_reference){

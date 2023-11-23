@@ -21,6 +21,7 @@ class CreateConsentsTable extends Migration
             $table->string('msisdn');
             $table->string('currency');
             $table->string('subscriptionPeriod');
+            $table->string('is_subscription')->default(0);
             $table->json('urls');
             $table->string('customer_reference')->nullable();
             $table->string('consentId')->nullable();

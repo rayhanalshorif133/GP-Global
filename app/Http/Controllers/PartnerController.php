@@ -11,4 +11,19 @@ class PartnerController extends Controller
         $url = url('api/partner/acrs/unsubscribe/' . $acr_key);
         return redirect($url);
     }
+    
+    public function renew($acr_key){
+        $url = url('api/partner/renew/' . $acr_key);
+        return redirect($url);
+    }
+    
+    public function refund($acr_key){
+        $url = url('api/partner/acrs/unsubscribe/' . $acr_key);
+        return redirect($url);
+    }
+
+    public function unsubscribe($acr_key){
+        $url = url('api/partner/acrs/unsubscribe/' . $acr_key);
+        return redirect($url);
+    }
 }
