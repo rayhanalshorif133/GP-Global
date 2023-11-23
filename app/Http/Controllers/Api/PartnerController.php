@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\PartnerSmsMessaging;
 use App\Models\PartnerPayment;
 use App\Models\InvalidAcrs;
+use App\Models\Refund;
 use App\Models\Consent;
 use App\Models\Subscriber;
 use App\Models\SubUnSubLog;
@@ -345,7 +346,9 @@ class PartnerController extends Controller
         $senderNumber = substr($consent->msisdn, -11);
         $senderNumber = "+88" . $senderNumber;
         // sender number validation::end
-        $service = Service::select()->where('id', $consent->service_id)->first();          
+        $service = Service::select()->where('id', $consent->service_id)->first();  
+        
+        $referenceCode = $this->referenceCode();
 
         $postBody = [
             "amountTransaction" => [
@@ -364,7 +367,7 @@ class PartnerController extends Controller
                         ]
                     ]
                 ],
-                "referenceCode" => "REF-sdacsdacsdacsdacsdacsdacs",
+                "referenceCode" => $referenceCode,
                 "transactionOperationStatus" => "Charged",
             ]
         ];
@@ -374,7 +377,41 @@ class PartnerController extends Controller
                 ->post($url, $postBody);
         
         $response = json_decode($response, true);
+
+
+        Refund::create([
+            'acr_key' => $acr_key,
+            'consentId' => $consent->consentId,
+            'referenceCode' => $referenceCode,
+            'service_keyword' => $service->keyword,
+            'sent_response' => json_encode($postBody),
+            'get_response' => json_encode($response),
+            'status' => true,
+        ]);
+        
         
         return $this->respondWithSuccess('Successfully refund', $response);
     }
+
+    function referenceCode(){
+        $referenceCode = "REF-" . $this->generateRandomString(12);
+        $getRef = Refund::where('referenceCode', $referenceCode)->first();
+        if($getRef){
+            $this->referenceCode();
+        }
+        return $getRef;
+    }
+
+
+    function generateRandomString($length = 25) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+
 }
