@@ -350,6 +350,7 @@ class PartnerController extends Controller
         
         $referenceCode = $this->referenceCode();
 
+
         $postBody = [
             "amountTransaction" => [
                 "endUserId" => $acr_key,
@@ -388,6 +389,25 @@ class PartnerController extends Controller
             'get_response' => json_encode($response),
             'status' => true,
         ]);
+
+        // send sms::start
+        $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $senderNumber . '/requests';
+        $msg = $service->name  . ' পরিষেবাটি পুনর্নবীকরণ হয়েছে।';
+        $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+            ->post($url, [
+                'outboundSMSMessageRequest' =>
+                [
+                    'address' => 'acr:' . $acr_key,
+                    'senderAddress' => 'tel:' . $senderNumber,
+                    'messageType' => 'ARN',
+                    'outboundSMSTextMessage' =>
+                    [
+                        'message' => $msg,
+                    ],
+                    'senderName' => $serviceProviderInfo->senderName
+
+                ]
+            ]);
         
         
         return $this->respondWithSuccess('Successfully refund', $response);
@@ -399,7 +419,7 @@ class PartnerController extends Controller
         if($getRef){
             $this->referenceCode();
         }
-        return $getRef;
+        return $referenceCode;
     }
 
 
