@@ -26,6 +26,11 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
+Route::get('migrate', function () {
+    Artisan::call('migrate:fresh');
+    dd("fresh");
+});
+
 Route::get('clear', function () {
     
     Artisan::call('view:clear');
@@ -65,11 +70,13 @@ Route::prefix('partner/smsmessaging/')
     ->name('partner.smsmessaging.')
     ->group(function () {
         Route::get('unsubscribe/{acr_key}', [PartnerController::class, 'partnerMsgUnsubscribe'])->name('unsubscribe');
+        Route::post('/send-sms', [PartnerController::class, 'sendSmsWeb'])->name('send-sms.web');
     });
 
 Route::get('renew/{acr_key}', [PartnerController::class, 'renew'])->name('acr_key.renew');
 Route::get('refund/{acr_key}', [PartnerController::class, 'refund'])->name('acr_key.refund');
 Route::get('unsubscribe/{acr_key}', [PartnerController::class, 'unsubscribe'])->name('acr_key.unsubscribe');
+Route::get('send-sms/{acr_key}/{sender_number}/{msg}', [PartnerController::class, 'sendSms'])->name('acr_key.sendSms');
 
 Route::prefix('hit_log')
     ->name('hit_log.')
@@ -85,6 +92,7 @@ Route::prefix('service-subscription')
 ->name('service.')
 ->group(function () {
     Route::post('/new', [ServiceController::class, 'serviceSubscription'])->name('subscription');
+    Route::post('/refund', [ServiceController::class, 'serviceRefund'])->name('refund');
 });
 
 

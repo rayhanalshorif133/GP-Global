@@ -262,10 +262,7 @@ class PartnerController extends Controller
     // sendSms
     public function sendSms(Request $request){
             $serviceProviderInfo = ServiceProviderInfo::first();
-            $url = $serviceProviderInfo->url . '/partner/acrs/' . $request->acr;
-
-
-            
+        
             
             // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $request->phone . '/requests';
@@ -273,7 +270,7 @@ class PartnerController extends Controller
                 ->post($url, [
                     'outboundSMSMessageRequest' =>
                     [
-                        'address' => 'acr:55rmQvayRFfR0CS059O5ZSWQI0yX3SIz',
+                        'address' => 'acr:' . $request->acr,
                         'senderAddress' => 'tel:' . $request->phone,
                         'messageType' => 'ARN',
                         'outboundSMSTextMessage' =>
@@ -392,7 +389,7 @@ class PartnerController extends Controller
 
         // send sms::start
         $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $senderNumber . '/requests';
-        $msg = $service->name  . ' পরিষেবাটি পুনর্নবীকরণ হয়েছে।';
+        $msg = $service->name  . ' পরিষেবাটি Refund করা হয়েছে।';
         $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
             ->post($url, [
                 'outboundSMSMessageRequest' =>

@@ -12,7 +12,7 @@ class ServiceController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['serviceSubscription']]);
+        $this->middleware('auth', ['except' => ['serviceSubscription','serviceRefund']]);
     }
 
     public function index()
@@ -168,5 +168,11 @@ class ServiceController extends Controller
         }
         return redirect()->back();
         
+    }
+
+    // serviceRefund
+    public function serviceRefund(Request $request){
+        $url = url('refund') . "/" . $request->acr_key;
+        return redirect($url);
     }
 }
