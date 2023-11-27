@@ -56,6 +56,7 @@ class ConsentController extends Controller
             ]);
         $responseData = $response->json();
 
+
         
        
         if ($responseData['resultCode'] == "SUCCESS") {

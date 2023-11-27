@@ -26,9 +26,9 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Route::get('migrate', function () {
+Route::get('migrate-fresh', function () {
     Artisan::call('migrate:fresh');
-    dd("fresh");
+    return "migrate:fresh";
 });
 
 Route::get('clear', function () {

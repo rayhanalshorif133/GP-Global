@@ -13,6 +13,7 @@ use App\Models\Refund;
 use App\Models\Consent;
 use App\Models\Subscriber;
 use App\Models\SubUnSubLog;
+use App\Models\Renew;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 
@@ -108,6 +109,7 @@ class PartnerController extends Controller
     {
 
         try {
+
             $serviceProviderInfo = ServiceProviderInfo::first();
             $consent = Consent::select()->where('customer_reference', $acr_key)->first();
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
@@ -121,12 +123,14 @@ class PartnerController extends Controller
                 return $this->respondWithError('ACR not found');
             }
 
+            $referenceCode = $this->referenceCode();
+
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, [
                     "amountTransaction" => [
                         "endUserId" => $consent->customer_reference,
                         "transactionOperationStatus" => "Charged",
-                        "referenceCode" => $request->referenceCode, // "REF-1234567890987654321"
+                        "referenceCode" => $referenceCode, // "REF-1234567890987654321"
                         "paymentAmount" => [
                             "chargingInformation" => [
                                 "amount" => $service->amount,
@@ -290,28 +294,78 @@ class PartnerController extends Controller
     // renew
     // http://localhost:3000/api/partner/renew/55rmQvayRFfR0CS0KOntVYT0yERlgHVK
     public function renew($acr_key){
-        $serviceProviderInfo = ServiceProviderInfo::first();
-        $consent = Consent::select()->where('customer_reference', $acr_key)->first();
-        $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key;
-        // sender number validation::start
-        $senderNumber = substr($consent->msisdn, -11);
-        $senderNumber = "+88" . $senderNumber;
-        // sender number validation::end
-        $service = Service::select()->where('id', $consent->service_id)->first();
-        $urlLink = url('unsubscribe') . "/" . $acr_key;
+
+        
+        try {
+            
+            $serviceProviderInfo = ServiceProviderInfo::first();
+            $consent = Consent::select()->where('customer_reference', $acr_key)->first();
+            $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
+            $service = Service::select()->where('id', $consent->service_id)->first();
+            
+            if (!$service) {
+                return $this->respondWithError('Service not found');
+            }
+            
+            if (!$consent) {
+                return $this->respondWithError('ACR not found');
+            }
+            
+            $referenceCode = $this->referenceCode();
+            // sender number validation::start
+            $senderNumber = substr($consent->msisdn, -11);
+            $senderNumber = "+88" . $senderNumber;
+            // sender number validation::end
+            
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+                ->post($url, [
+                    "amountTransaction" => [
+                        "endUserId" => $consent->customer_reference,
+                        "transactionOperationStatus" => "Charged",
+                        "referenceCode" => $referenceCode, // "REF-1234567890987654321"
+                        "paymentAmount" => [
+                            "chargingInformation" => [
+                                "amount" => $service->amount,
+                                "description" => [
+                                    $service->name
+                                ],
+                                "currency" => "BDT"
+                            ],
+                            "chargingMetaData" => [
+                                "purchaseCategoryCode" => "Game",
+                                "mandateId" => [
+                                    "subscription" => $consent->subscriptionPeriod,
+                                    "subscriptionPeriod" => $service->validity,
+                                    "consentId" => $consent->consentId
+                                ]
+                            ]
+                        ],
+                        "operatorId" => $serviceProviderInfo->operatorId
+                    ]
+                ]);
 
 
-        $url = $serviceProviderInfo->url . '/partner/acrs/'. $acr_key . '/renew';
+            $responseData = $response->json();
+            // request Error
+            if (isset($responseData['requestError'])) {
+                return $this->respondWithError("error.!!", $responseData);
+            }
 
 
-        $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->post($url);
+            $renew = new Renew();
+            $renew->acr_key = $consent->customer_reference;
+            $renew->referenceCode = $referenceCode;
+            $renew->service_keyword = $service->service_keyword;
+            $renew->subscription = $consent->subscriptionPeriod;
+            $renew->consentId = $consent->consentId;
+            $renew->response = json_encode($responseData);
+            $renew->save();
 
-        $responseData = $response->json();
-
-
+            
+            $urlLink = url('unsubscribe') . "/" . $acr_key;
         // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $senderNumber . '/requests';
-            $msg = $service->name  . ' পরিষেবাটি পুনর্নবীকরণ হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
+            $msg = $service->name  . ' পরিষেবাটি Renew হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, [
                     'outboundSMSMessageRequest' =>
@@ -329,9 +383,13 @@ class PartnerController extends Controller
                 ]);
 
 
-            $responseData = $response->json();
+             $responseData = $response->json();
+             return $this->respondWithSuccess('smsmessaging', $responseData);
+        } catch (\Throwable $th) {
+            return $this->respondWithError('Something went wrong...!', $th->getMessage());
+        }
 
-        return $this->respondWithSuccess('Successfully renew', $acr_key);
+
     }
 
     // refund service
