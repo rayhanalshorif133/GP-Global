@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\ConsentController;
 use App\Http\Controllers\Api\PartnerController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\RefundNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +45,11 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
     Route::get('renew/{acr_key}', [PartnerController::class, 'renew'])->name('renew');
     Route::get('refund/{acr_key}', [PartnerController::class, 'refund'])->name('refund');
 });
+
+Route::get('notification', [NotificationController::class, 'notification'])->name('notification');
+Route::get('refund-notification', [NotificationController::class, 'refundNotification'])->name('refund-notification');
+
+
 
 
 
