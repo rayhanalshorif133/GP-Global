@@ -25,4 +25,11 @@ class AuthController extends Controller
             'token' => $token->plainTextToken
         ]);
     }
+
+    // logout
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+        return redirect()->route('login');
+    }
 }

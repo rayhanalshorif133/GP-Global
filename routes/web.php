@@ -60,6 +60,7 @@ Route::resource('product', ProductController::class);
 Route::middleware('auth')
     ->get('token/create', [AuthController::class, 'createToken'])->name('token.create');
 
+
 // consent/prepare
 Route::prefix('consent/prepare/')
     ->name('consent.prepare.')
