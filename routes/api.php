@@ -50,11 +50,10 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
 });
 
 
-// Route::post('login', [AuthController::class, 'login'])->name('login');
 
 
-Route::middleware('auth:sanctum')->get('notification', [NotificationController::class, 'notification'])->name('notification');
-Route::middleware('auth:sanctum')->get('refund-notification', [NotificationController::class, 'refundNotification'])->name('refund-notification');
+Route::middleware('basicauth')->get('notification', [NotificationController::class, 'notification'])->name('notification');
+Route::middleware('basicauth')->get('refund-notification', [NotificationController::class, 'refundNotification'])->name('refund-notification');
 
 
 
