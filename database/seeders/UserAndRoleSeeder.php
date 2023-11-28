@@ -35,7 +35,7 @@ class UserAndRoleSeeder extends Seeder
         // user
         $user = User::create([
             'name' => 'tokenUser',
-            'email' => 'token@gmail.com',
+            'email' => 'token@b2m-tech.com',
             'password' => Hash::make('password'),
         ]);
 

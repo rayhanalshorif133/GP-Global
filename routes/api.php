@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ConsentController;
 use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\RefundNotificationController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,8 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
     Route::get('refund/{acr_key}', [PartnerController::class, 'refund'])->name('refund');
 });
 
+
+// Route::post('login', [AuthController::class, 'login'])->name('login');
 
 
 Route::middleware('auth:sanctum')->get('notification', [NotificationController::class, 'notification'])->name('notification');
