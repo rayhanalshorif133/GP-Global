@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Permission;
 
 class UserAndRoleSeeder extends Seeder
 {
-    
+
     public function __construct()
     {
         $this->run();
@@ -19,9 +19,10 @@ class UserAndRoleSeeder extends Seeder
 
     public function run()
     {
-        
-        $role = Role::create(['name' => 'admin']);
-        
+
+        $adminRole = Role::create(['name' => 'admin']);
+        $userRole = Role::create(['name' => 'user']);
+
         // user
         $user = User::create([
             'name' => 'admin',
@@ -29,6 +30,17 @@ class UserAndRoleSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        $user->assignRole($role);
+        $user->assignRole($adminRole);
+
+        // user
+        $user = User::create([
+            'name' => 'tokenUser',
+            'email' => 'token@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        $user->assignRole($userRole);
+
+
     }
 }

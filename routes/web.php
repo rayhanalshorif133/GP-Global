@@ -8,6 +8,7 @@ use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\WebHomeController;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\AuthController;
 
 use App\Http\Controllers\ServiceProviderInfoController;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,7 @@ Route::get('migrate-fresh', function () {
 });
 
 Route::get('clear', function () {
-    
+
     Artisan::call('view:clear');
     Artisan::call('cache:clear');
     Artisan::call('route:clear');
@@ -56,13 +57,16 @@ Route::resource('product', ProductController::class);
 
 
 
+Route::middleware('auth')
+    ->get('token/create', [AuthController::class, 'createToken'])->name('token.create');
+
 // consent/prepare
 Route::prefix('consent/prepare/')
     ->name('consent.prepare.')
     ->group(function () {
         Route::get('success', [ConsentController::class, 'consentPrepareSuccess'])->name('success');
         Route::get('deny', [ConsentController::class, 'consentPrepareDeny'])->name('deny');
-        Route::get('error', [ConsentController::class, 'consentPrepareError'])->name('error');    
+        Route::get('error', [ConsentController::class, 'consentPrepareError'])->name('error');
 });
 
 
