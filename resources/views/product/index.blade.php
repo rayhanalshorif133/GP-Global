@@ -86,7 +86,7 @@
                         render: function(data, type, row) {
                             const btns = `
                             <div class="btn-group" id="${row.id}">
-                                
+
                                 <button type="button" class="btn btn-outline-info productEditBtn" data-toggle="modal"
                                     data-target="#product-edit">
                                     <i class="fas fa-pen"></i>
@@ -105,7 +105,7 @@
             });
             productEditBtnHandler();
             productDeleteBtnHandler();
-            
+
         });
 
         const productEditBtnHandler = () => {
@@ -115,16 +115,17 @@
                 .then(function(response) {
                     const data = response.data.data;
                     console.log(data);
-                    $("#productUpdateFrom").attr('action', `/product/${id}`);  
-                    $("#productUpdateFrom #update_name").val(data.name);                    
-                    $("#productUpdateFrom #update_service_id").val(data.service_id);                    
-                    $("#productUpdateFrom #update_keyword").val(data.product_key);                    
-                    $("#productUpdateFrom #update_description").val(data.description);                    
+                    $("#productUpdateFrom").attr('action', `/product/${id}`);
+                    $("#productUpdateFrom #update_name").val(data.name);
+                    $("#productUpdateFrom #update_service_id").val(data.service_id);
+
+                    $("#productUpdateFrom #update_keyword").val(data.product_key);
+                    $("#productUpdateFrom #update_description").val(data.description);
                     $("#product-update").modal('show');
                 });
             });
         };
-        
+
         const productDeleteBtnHandler = () => {
             $(document).on('click', '.productDeleteBtn', function() {
                 const id = $(this).parent().attr('id');

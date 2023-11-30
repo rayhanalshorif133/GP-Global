@@ -140,15 +140,17 @@
                     $("#serviceUpdateFrom input[name='purchase_category_code']").val(data.purchase_category_code);
                     $("#serviceUpdateFrom input[name='reference_code']").val(data.reference_code);
                     $("#serviceUpdateFrom input[name='channel']").val(data.channel);
+                    $("#serviceUpdateFrom input[name='amount']").val(data.amount);
+                    $("#serviceUpdateFrom textarea[name='description']").val(data.description);
                     $("#serviceUpdateFrom input[name='on_behalf_of']").val(data.on_behalf_of);
                     $("#serviceUpdateFrom input[name='redirect_url']").val(data.redirect_url);
                     $("#serviceUpdateFrom input[name='keyword']").val(data.keyword);
-                    
+
                     $("#service-update").modal('show');
                 });
             });
         };
-        
+
         const serviceShowBtnHandaler = () => {
             $(document).on('click', '.serviceShowBtn', function() {
                 const id = $(this).parent().attr('id');
@@ -164,7 +166,8 @@
                     const reference_code = data.reference_code? data.reference_code : "Not Set";
                     $(".show_reference_code").text(reference_code);
                     $(".show_channel").text(channel);
-                    $(".show_redirect_url").text(data.redirect_url);               
+                    $(".show_redirect_url").text(data.redirect_url);
+                    $(".show_description").text(data.description);
                     $("#service-show").modal('show');
                 });
             });

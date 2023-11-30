@@ -13,7 +13,6 @@ class ConsentController extends Controller
     public function consentPrepareSuccess(Request $request)
     {
 
-        // https://gpglobal.technical-content.xyz/consent/prepare/success?customerReference=55rmQvayRFfR0CS0UzeC2r7t1BLRvEI5&consentId=1ca35b58-4872-446e-8b01-12184c0eb9ed
 
 
         // has customer reference
@@ -22,11 +21,11 @@ class ConsentController extends Controller
             ->where('is_subscription', 1)
             ->first();
 
-        
+
         if($customer_reference){
             return $this->respondWithError('Consent already subscribed.');
         }
-        
+
         // get last create consent
         $consent = Consent::latest()->with('service')->first();
         $serviceProviderInfo = ServiceProviderInfo::first();
@@ -35,7 +34,7 @@ class ConsentController extends Controller
             $consent->customer_reference = $request->customerReference;
             $consent->consentId = $request->consentId;
             $consent->save();
-            $url = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $consent->service->keyword . '&acr_key=' . $request->customerReference . '&senderName=' . $serviceProviderInfo->senderName; 
+            $url = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $consent->service->keyword . '&acr_key=' . $request->customerReference . '&senderName=' . $serviceProviderInfo->senderName;
             return redirect($url);
         }else{
             return $this->respondWithError('Consent prepared failed!' );
@@ -53,5 +52,5 @@ class ConsentController extends Controller
         // return view('consent.prepare.error');
         return $this->respondWithSuccess('Consent prepared Error!',$request->all());
     }
-    
+
 }

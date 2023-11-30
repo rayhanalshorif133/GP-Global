@@ -96,7 +96,7 @@ class PartnerController extends Controller
             $subUnSubLog->opt_time = date('H:i:s A');
             $subUnSubLog->save();
             // Subscriber::end
-            
+
             // return view('consent.prepare.success');
             return $this->respondWithSuccess('Your service has started successfully.',$subscriber);
         } catch (\Throwable $th) {
@@ -114,7 +114,7 @@ class PartnerController extends Controller
             $consent = Consent::select()->where('customer_reference', $acr_key)->first();
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
             $service = Service::select()->where('keyword', $request->service_keyword)->first();
-            
+
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
@@ -190,8 +190,8 @@ class PartnerController extends Controller
              $msisdn = substr($consent->msisdn, -11);
              $msisdn = "+88" . $msisdn;
              // sender number validation::end
-            
-            
+
+
             // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $msisdn . '/requests';
 
@@ -229,22 +229,22 @@ class PartnerController extends Controller
             $subUnSubLog->status = 0;
             $subUnSubLog->opt_date = date('Y-m-d');
             $subUnSubLog->opt_time = date('H:i:s A');
-            $subUnSubLog->save();     
-            
-            
+            $subUnSubLog->save();
+
+
             // $consent subscribe
             $consent->is_subscription = 0;
             $consent->save();
 
             // delete acr::start
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->delete($url);
-            
-            
+
+
             $responseData = $response->json();
             if (isset($responseData['requestError'])) {
                 return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
             }
-            
+
 
             $invalidAcrs = InvalidAcrs::updateOrCreate(
                 ['acr_key' => $acr_key],
@@ -254,8 +254,8 @@ class PartnerController extends Controller
                 ]
             );
             // delete acr::end
-            
-            
+
+
 
             return $this->respondWithSuccess('Acr Invalidated', $invalidAcrs);
         } catch (\Throwable $th) {
@@ -266,8 +266,8 @@ class PartnerController extends Controller
     // sendSms
     public function sendSms(Request $request){
             $serviceProviderInfo = ServiceProviderInfo::first();
-        
-            
+
+
             // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $request->phone . '/requests';
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
@@ -295,28 +295,28 @@ class PartnerController extends Controller
     // http://localhost:3000/api/partner/renew/55rmQvayRFfR0CS0KOntVYT0yERlgHVK
     public function renew($acr_key){
 
-        
+
         try {
-            
+
             $serviceProviderInfo = ServiceProviderInfo::first();
             $consent = Consent::select()->where('customer_reference', $acr_key)->first();
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
             $service = Service::select()->where('id', $consent->service_id)->first();
-            
+
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
-            
+
             if (!$consent) {
                 return $this->respondWithError('ACR not found');
             }
-            
+
             $referenceCode = $this->referenceCode();
             // sender number validation::start
             $senderNumber = substr($consent->msisdn, -11);
             $senderNumber = "+88" . $senderNumber;
             // sender number validation::end
-            
+
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, [
                     "amountTransaction" => [
@@ -361,7 +361,7 @@ class PartnerController extends Controller
             $renew->response = json_encode($responseData);
             $renew->save();
 
-            
+
             $urlLink = url('unsubscribe') . "/" . $acr_key;
         // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $senderNumber . '/requests';
@@ -401,8 +401,8 @@ class PartnerController extends Controller
         $senderNumber = substr($consent->msisdn, -11);
         $senderNumber = "+88" . $senderNumber;
         // sender number validation::end
-        $service = Service::select()->where('id', $consent->service_id)->first();  
-        
+        $service = Service::select()->where('id', $consent->service_id)->first();
+
         $referenceCode = $this->referenceCode();
 
 
@@ -413,7 +413,7 @@ class PartnerController extends Controller
                     "chargingInformation" => [
                         "amount" => $service->amount,
                         "currency" => "BDT",
-                        "description" => "Product 1 des"
+                        "description" => $service->description,
                     ],
                     "chargingMetaData" => [
                         "purchaseCategoryCode" => "b2mtech-Game",
@@ -431,7 +431,7 @@ class PartnerController extends Controller
 
         $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, $postBody);
-        
+
         $response = json_decode($response, true);
 
 
@@ -463,8 +463,8 @@ class PartnerController extends Controller
 
                 ]
             ]);
-        
-        
+
+
         return $this->respondWithSuccess('Successfully refund', $response);
     }
 

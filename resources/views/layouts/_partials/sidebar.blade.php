@@ -52,7 +52,7 @@
                         </p>
                     </a>
                 </li>
-                
+
                 <li class="nav-item @if ($routeName == 'service.index' || $routeName == 'service-provider-info.index') menu-is-opening menu-open @endif ">
                     <a href="#" class="nav-link @if($routeName == 'service.index' || $routeName == 'service.show' || $routeName == 'service-provider-info.index') active @endif">
                       <i class="nav-icon fa-solid fa-hammer"></i>
@@ -76,14 +76,14 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('product.index') }}" class="nav-link @if ($routeName == 'product.index') active @endif">
                         <i class="nav-icon fa-solid fa-store"></i>
                         <p>
                             Product
                         </p>
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item @if ($routeName == 'hit_log.sent' || $routeName == 'hit_log.received') menu-is-opening menu-open @endif ">
                     <a href="#" class="nav-link @if($routeName == 'hit_log.sent' || $routeName == 'hit_log.received') active @endif">
                         <i class="nav-icon fa-solid fa-bolt"></i>

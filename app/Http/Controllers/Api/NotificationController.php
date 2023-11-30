@@ -14,6 +14,8 @@ class NotificationController extends Controller
      public function notification(Request $request){
         try {
             $notification = new Notification();
+            $notification->acr = $request->deactivatedSubscriptions[0]['acr'];
+            $notification->subscription = $request->deactivatedSubscriptions[0]['subscription'];
             $notification->response = json_encode($request->all());
             $notification->save();
             return $this->respondWithSuccess('Successful notified. Thanks.');
@@ -25,6 +27,9 @@ class NotificationController extends Controller
     public function refundNotification(Request $request){
         try {
             $refundNotification = new RefundNotification();
+            $refundNotification->transactionReference = $request->transactionReference;
+            $refundNotification->timestamp = $request->timestamp;
+            $refundNotification->transactionServerReference = $request->transactionServerReference;
             $refundNotification->response = json_encode($request->all());
             $refundNotification->save();
             return $this->respondWithSuccess('Successful notified. Thanks.');

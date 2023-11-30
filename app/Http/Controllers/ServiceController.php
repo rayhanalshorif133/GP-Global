@@ -10,10 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ServiceController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth', ['except' => ['serviceSubscription','serviceRefund']]);
-    }
+
 
     public function index()
     {
@@ -26,7 +23,7 @@ class ServiceController extends Controller
         return view('service.index');
     }
 
-    // create 
+    // create
     public function store(Request $request)
     {
         $isValidator = Validator::make($request->all(), [
@@ -36,6 +33,7 @@ class ServiceController extends Controller
             'validity' => 'required',
             'keyword' => 'required|unique:services',
         ]);
+
 
 
         if ($isValidator->fails()) {
@@ -51,12 +49,14 @@ class ServiceController extends Controller
             $service->type = $request->type;
             $service->validity = $request->validity;
             $service->redirect_url = $request->redirect_url;
+            $service->description = $request->description;
             $service->save();
             flash()->addSuccess('Service created successfully!');
+            return redirect()->route('service.index');
         } catch (\Throwable $th) {
             flash()->addError($th->getMessage());
+            return redirect()->route('service.index');
         }
-        return redirect()->route('service.index');
     }
 
     // edit
@@ -66,7 +66,7 @@ class ServiceController extends Controller
         return $this->respondWithSuccess('Service fetched successfully!', $service);
 
     }
-    
+
     public function edit($id)
     {
         $service = Service::find($id);
@@ -112,6 +112,7 @@ class ServiceController extends Controller
             $service->name = $request->name;
             $service->type = $request->type;
             $service->keyword = $request->keyword;
+            $service->description = $request->description;
             $service->amount = $request->amount;
             $service->validity = $request->validity;
             $service->redirect_url = $request->redirect_url;
@@ -156,9 +157,9 @@ class ServiceController extends Controller
     public function serviceSubscription(Request $request){
 
         if($request->phone_number == ""){
-            flash()->addError('Please input a phone number!'); 
+            flash()->addError('Please input a phone number!');
         }
-        
+
         $service = Service::find($request->service_id);
         if($service){
             $url = url('api/consent/prepare') . "/" . $service->validity . "/P1/" . $request->phone_number;
@@ -167,7 +168,7 @@ class ServiceController extends Controller
             flash()->addError('Service is not found!');
         }
         return redirect()->back();
-        
+
     }
 
     // serviceRefund

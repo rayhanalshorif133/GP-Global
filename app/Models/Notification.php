@@ -10,6 +10,9 @@ class Notification extends Model
     use HasFactory;
 
     protected $fillable = [
+        'acr',
+        'subscription',
         'response'
+
     ];
 }

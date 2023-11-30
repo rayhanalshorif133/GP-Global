@@ -9,8 +9,11 @@ class RefundNotification extends Model
 {
     use HasFactory;
 
-    
+
     protected $fillable = [
+        'transactionReference',
+        'timestamp',
+        'transactionServerReference',
         'response'
     ];
 }

@@ -15,7 +15,6 @@ class CreateConsentsTable extends Migration
     {
         Schema::create('consents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("product_id")->constrained("products")->onDelete("cascade")->onUpdate("cascade");
             $table->foreignId("service_id")->constrained("services")->onDelete("cascade")->onUpdate("cascade");
             $table->string('amount');
             $table->string('msisdn');

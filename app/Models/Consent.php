@@ -8,10 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Consent extends Model
 {
     use HasFactory;
-    
+
 
     protected $fillable = [
-        'product_id',
         'service_id',
         'amount',
         'msisdn',

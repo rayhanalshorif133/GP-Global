@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::group(['prefix' => 'consent', 'name' => 'consent.'], function () {
-    Route::match(['get', 'post'], 'prepare/{subscriptionPeriod}/{productKey}/{msisdn}', [ConsentController::class, 'prepare'])
+    Route::match(['get', 'post'], 'prepare/{subscriptionPeriod}/{keyword}/{msisdn}', [ConsentController::class, 'prepare'])
     ->name('consent.prepare');
 });
 
@@ -52,8 +52,8 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
 
 
 
-Route::middleware('basicauth')->get('notification', [NotificationController::class, 'notification'])->name('notification');
-Route::middleware('basicauth')->get('refund-notification', [NotificationController::class, 'refundNotification'])->name('refund-notification');
+Route::middleware('basicauth')->post('notification', [NotificationController::class, 'notification'])->name('notification');
+Route::middleware('basicauth')->post('refund-notification', [NotificationController::class, 'refundNotification'])->name('refund-notification');
 
 
 

@@ -37,9 +37,9 @@
                                     <label for="validity" class="required">Service validity</label>
                                     <select class="form-control" name="validity" required id="validity">
                                         <option value="" selected disabled>Select validity</option>
-                                        <option value="P1D">Daily</option>
-                                        <option value="P7D">Weekly</option>
-                                        <option value="P30D">Monthly</option>
+                                        <option value="P1D">Daily (P1D)</option>
+                                        <option value="P7D">Weekly (P7D)</option>
+                                        <option value="P30D">Monthly (P30D)</option>
                                     </select>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@
                                 <div class="form-group">
                                     <label for="amount" class="required">Service amount</label>
                                     <input type="number" name="amount" id="amount" required class="form-control"
-                                        placeholder="Enter Service amount">                                    
+                                        placeholder="Enter Service amount">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -62,6 +62,13 @@
                                     <label for="redirect_url" class="required">Redirect URL</label>
                                     <input type="text" name="redirect_url" id="redirect_url" required class="form-control"
                                         placeholder="Enter Redirect URL">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="description" class="optional">Description</label>
+                                    <textarea type="text" name="description" id="description" class="form-control"
+                                        placeholder="Enter description Name"></textarea>
                                 </div>
                             </div>
                         </div>

@@ -15,6 +15,9 @@ class CreateRefundNotificationsTable extends Migration
     {
         Schema::create('refund_notifications', function (Blueprint $table) {
             $table->id();
+            $table->string('transactionReference');
+            $table->string('timestamp');
+            $table->string('transactionServerReference');
             $table->json('response');
             $table->timestamps();
         });

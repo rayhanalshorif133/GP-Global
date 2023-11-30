@@ -7,28 +7,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\ServiceProviderInfo;
 use App\Models\Consent;
-use App\Models\Product;
+use App\Models\Service;
 
 class ConsentController extends Controller
 {
-    public function prepare($subscriptionPeriod = null, $productKey = null, $msisdn = null ,Request $request)
+    public function prepare($subscriptionPeriod = null, $keyword = null, $msisdn = null ,Request $request)
     {
 
         // requested method
         $method = $request->method();
-        
+
         $getSubscriptionPeriod = $method == "POST" ? $request->subscriptionPeriod : $subscriptionPeriod;
-        $getProductKey = $method == "POST" ? $request->productKey : $productKey;
+        $service_keyword = $method == "POST" ? $request->keyword : $keyword;
         $msisdn = $method == "POST" ? $request->msisdn : $msisdn;
-        
 
 
-        
+
+
 
         $serviceProviderInfo = ServiceProviderInfo::first();
-        $product = Product::select()->where('product_key', $getProductKey)
-            ->with('service')
-            ->first();
+        $service = Service::select()->where('keyword', $service_keyword)->first();
 
         $url = $serviceProviderInfo->url . '/partner/v3/consent/prepare';
 
@@ -41,42 +39,43 @@ class ConsentController extends Controller
 
         $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
             ->post($url, [
-                'amount' => $product->service->amount,
+                'amount' => $service->amount,
                 'currency' => "BDT",
                 'MSISDN' => $msisdn,
-                'productDescription' => $product->description,
+                'productDescription' => $service->description,
                 'subscriptionPeriod' => $getSubscriptionPeriod,
                 'urls' => $urls,
                 'operatorId' => $serviceProviderInfo->operatorId,
                 'pinRequest' => [
                     'parameters' => [
-                        'serviceName' => $product->service->name,
+                        'serviceName' => $service->name,
                     ]
                 ]
             ]);
         $responseData = $response->json();
 
 
-        
-       
+
+        if($responseData == null) {
+            return $this->respondWithError("Something went wrong", $responseData);
+        }
+
+
+
+
         if ($responseData['resultCode'] == "SUCCESS") {
             $consent = new Consent();
-            $consent->product_id = $product->id;
             $consent->msisdn = $msisdn;
-            $consent->amount = $product->service->amount;
+            $consent->amount = $service->amount;
             $consent->currency = "BDT";
             $consent->subscriptionPeriod = $request->subscriptionPeriod;
             $consent->urls = json_encode($urls);
-            $consent->service_id = $product->service_id;
+            $consent->service_id = $service->id;
             $consent->response = json_encode($responseData);
             $consent->save();
             return redirect($responseData['url']);
         } else {
             return $this->respondWithError($responseData['resultDescription']);
         }
-    }
-
-    public function check(){
-        return "hello";
     }
 }
