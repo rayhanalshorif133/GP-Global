@@ -49,6 +49,8 @@ class ServiceController extends Controller
             $service->type = $request->type;
             $service->validity = $request->validity;
             $service->redirect_url = $request->redirect_url;
+            $api_url = url('api/consent/prepare') . "/" . $request->validity . "/" . $request->keyword ."/{msisdn}";
+            $service->api_url = $api_url;
             $service->description = $request->description;
             $service->save();
             flash()->addSuccess('Service created successfully!');
@@ -108,6 +110,8 @@ class ServiceController extends Controller
 
 
         try {
+
+
             $service = Service::find($id);
             $service->name = $request->name;
             $service->type = $request->type;
@@ -115,8 +119,11 @@ class ServiceController extends Controller
             $service->description = $request->description;
             $service->amount = $request->amount;
             $service->validity = $request->validity;
+            $api_url = url('api/consent/prepare') . "/" . $request->validity . "/" . $request->keyword ."/{msisdn}";
+            $service->api_url = $api_url;
             $service->redirect_url = $request->redirect_url;
             $service->save();
+
             flash()->addSuccess('Service updated successfully!');
         } catch (\Throwable $th) {
             flash()->addError('Something went wrong!');

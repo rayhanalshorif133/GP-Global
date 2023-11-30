@@ -16,6 +16,7 @@
                     <li class="list-group-item"><b>Type:</b> <span class="text-gray float-right show_service_type"></span></li>
                     <li class="list-group-item"><b>Validity:</b> <span class="text-gray float-right show_service_validity"></span></li>
                     <li class="list-group-item"><b>Charge:</b> <span class="text-gray float-right mx-1">Tk</span><span class="text-gray float-right show_service_charge"></span></li>
+                    <li class="list-group-item"><b>Api URL:</b> <span class="text-gray float-right show_api_url"></span></li>
                     <li class="list-group-item"><b>Redirect URL:</b> <span class="text-gray float-right show_redirect_url"></span></li>
                     <li class="list-group-item"><b>Description:</b> <span class="text-gray float-right show_description"></span></li>
                 </ul>

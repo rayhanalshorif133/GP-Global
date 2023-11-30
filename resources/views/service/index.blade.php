@@ -166,6 +166,7 @@
                     const reference_code = data.reference_code? data.reference_code : "Not Set";
                     $(".show_reference_code").text(reference_code);
                     $(".show_channel").text(channel);
+                    $(".show_api_url").text(data.api_url);
                     $(".show_redirect_url").text(data.redirect_url);
                     $(".show_description").text(data.description);
                     $("#service-show").modal('show');

@@ -16,6 +16,7 @@ class Service extends Model
         'name',
         'keyword',
         'type',
+        'api_url',
         'redirect_url',
         'amount',
         'description',
