@@ -16,11 +16,13 @@ class CreatePartnerSmsMessagingsTable extends Migration
         Schema::create('partner_sms_messagings', function (Blueprint $table) {
             $table->id();
             $table->string('senderNumber');
-            $table->string('service_keyword');
+            $table->string('keyword');
             $table->string('acr_key');
-            $table->string('senderName');
+            $table->string('senderName')->nullable();
             $table->string('messageType')->default('ARN');
-            $table->longText('message');
+            $table->longText('message')->nullable();
+            $table->string('status')->commit('1 means success and 0 means failure');
+            $table->json('payload');
             $table->json('response');
             $table->timestamps();
         });

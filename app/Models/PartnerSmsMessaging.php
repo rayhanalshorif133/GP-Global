@@ -11,11 +11,14 @@ class PartnerSmsMessaging extends Model
 
     protected $fillable = [
         'senderNumber',
-        'service_keyword',
+        'keyword',
         'acr_key',
         'senderName',
         'messageType',
         'message',
-        'response'
+        'payload',
+        'response',
+        'status'
     ];
+
 }

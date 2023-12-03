@@ -11,7 +11,7 @@ class SubUnSubLog extends Model
 
     protected $fillable = [
         'msisdn',
-        'service',
+        'keyword',
         'status',
         'opt_date',
         'opt_time',

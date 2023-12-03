@@ -9,6 +9,7 @@ use App\Models\ServiceProviderInfo;
 use App\Models\Service;
 use App\Models\PartnerPayment;
 use App\Models\ChargeLog;
+use App\Models\Subscriber;
 use Illuminate\Support\Facades\Http;
 
 class PaymentController extends Controller
@@ -58,7 +59,8 @@ class PaymentController extends Controller
                 $responseData = $response->json();
 
 
-                $status = isset($responseData['requestError']) ? 0 : 1;
+                // $status = isset($responseData['requestError']) ? 0 : 1;
+                $status = isset($responseData->requestError) ? 0 : 1;
 
                 $payment = new PartnerPayment();
                 $payment->acr_key = $consent->customer_reference;
@@ -83,6 +85,25 @@ class PaymentController extends Controller
                     $chargeLog->charge_date = date('Y-m-d');
                     $chargeLog->save();
                     // charge log:end
+                    // subscriber:start
+                    $subscriber = Subscriber::select()
+                    ->where('msisdn', $consent->msisdn)
+                    ->where('acr', $consent->customer_reference)->first();
+
+                    if(!$subscriber){
+                        $subscriber = new Subscriber();
+                    }
+
+                    $subscriber->msisdn = $consent->msisdn;
+                    $subscriber->acr = $consent->customer_reference;
+                    $subscriber->tid = $referenceCode;
+                    $subscriber->status = 1;
+                    $subscriber->keyword = $service->keyword;
+                    $subscriber->subs_date = date('Y-m-d');
+                    $subscriber->unsubs_date = null;
+                    $subscriber->save();
+                    // subscriber:start
+
                     // send sms for payment success
                     $sendSMSURL = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $service->keyword . '&acr_key=' . $consent->customer_reference . '&senderName=' . $serviceProviderInfo->senderName;
                     Http::get($sendSMSURL);

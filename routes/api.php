@@ -38,7 +38,7 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
     Route::get('smsmessaging/{senderNumber}', [PartnerController::class, 'smsmessaging'])->name('smsmessaging');
     Route::get('smsmessaging/unsubscribe/{acr_key}', [PartnerController::class, 'partnerMsgUnsubscribe'])->name('partnerMsgUnsubscribe');
     //Route::post('payment/{acr_key}', [PartnerController::class, 'payment'])->name('payment');
-    Route::match(['get', 'post'], '/payment/{acr_key}', [PartnerController::class, 'payment'])->name('payment');
+    // Route::match(['get', 'post'], '/payment/{acr_key}', [PartnerController::class, 'payment'])->name('payment');
     Route::get('/acrs/unsubscribe/{acr_key}', [PartnerController::class, 'invalidAcrs'])->name('invalidAcrs');
     Route::post('/send-sms', [PartnerController::class, 'sendSms'])->name('send-sms');
     // renew
@@ -49,11 +49,16 @@ Route::group(['prefix' => 'partner', 'name' => 'partner.'], function () {
 
 
 // subscription
+// http://127.0.0.1:8000/api/subscription?api_url=https://www.google.com&keyword=BDG&msisdn=8801323174104
 Route::match(['get', 'post'], '/subscription', [SubsAndUnsubsController::class, 'subscription'])->name('subscription');
+
+// http://127.0.0.1:8000/api/unsubscription?keyword=BDG&acr=sadjcnjcndkjnsacn&msisdn=8801323174104
 Route::match(['get', 'post'], '/unsubscription', [SubsAndUnsubsController::class, 'unsubscription'])->name('unsubscription');
 
 // payment
 Route::match(['get', 'post'], '/payment', [PaymentController::class, 'payment'])->name('payment');
+// status check
+Route::match(['get', 'post'], '/status-check', [SubsAndUnsubsController::class, 'statusCheck'])->name('status-check');
 
 
 
