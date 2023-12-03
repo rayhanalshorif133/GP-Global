@@ -22,9 +22,12 @@ class CreateConsentsTable extends Migration
             $table->string('subscriptionPeriod');
             $table->string('is_subscription')->default(0);
             $table->json('urls');
+            $table->string('api_url');
             $table->string('customer_reference')->nullable();
             $table->string('consentId')->nullable();
-            $table->json('response');
+            $table->string('result_code')->nullable();
+            $table->json('payload')->nullable();
+            $table->json('response')->nullable();
             $table->timestamps();
         });
     }

@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Route::get('migrate', function () {
+Route::get('migrate-fresh', function () {
     Artisan::call('migrate:fresh');
     return "migrate:fresh";
 });
@@ -46,9 +46,6 @@ Route::get('clear', function () {
 });
 
 Route::get('/', [WebHomeController::class,'index'])->name('web.home');
-Route::get('/admin', function(){
-    return redirect()->route('login');
-})->name('admin.login');
 
 Auth::routes();
 

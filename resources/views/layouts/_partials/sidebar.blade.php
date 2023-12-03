@@ -93,7 +93,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
+                    {{-- <li class="nav-item">
                             <a href="{{ route('hit_log.sent') }}" class="nav-link  @if ($routeName == 'hit_log.sent') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>
@@ -101,7 +101,7 @@
                                 </p>
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
                             <a href="{{ route('hit_log.received') }}" class="nav-link  @if ($routeName == 'hit_log.received') active @endif">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>
@@ -111,12 +111,12 @@
                         </li> --}}
                     </ul>
                 </li>
-                <li class="nav-item @if ($routeName == 'api.index') menu-is-opening menu-open @endif ">
+                <!-- <li class="nav-item @if ($routeName == 'api.index') menu-is-opening menu-open @endif ">
                     <a href="{{route('api.index')}}" class="nav-link @if($routeName == 'api.index') active @endif">
                         <i class="nav-icon fa-solid fa-paper-plane"></i>
                         <p> Api documentations  </p>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

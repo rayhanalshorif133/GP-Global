@@ -17,8 +17,11 @@ class Consent extends Model
         'currency',
         'subscriptionPeriod',
         'urls',
+        'api_url',
         'customer_reference',
         'consentId',
+        'payload',
+        'result_code',
         'response',
         'is_subscription',
     ];

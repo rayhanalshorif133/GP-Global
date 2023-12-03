@@ -14,6 +14,7 @@ use App\Models\Consent;
 use App\Models\Subscriber;
 use App\Models\SubUnSubLog;
 use App\Models\Renew;
+use App\Models\RenewLog;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 
@@ -97,8 +98,18 @@ class PartnerController extends Controller
             $subUnSubLog->save();
             // Subscriber::end
 
-            // return view('consent.prepare.success');
-            return $this->respondWithSuccess('Your service has started successfully.',$subscriber);
+            $type = "";
+            $status = 0;
+            if($subUnSubLog->status == 1){
+                $type = 'subscribe';
+                $status = 1;
+            }else{
+                $type = 'unsubscribe';
+                $status = 0;
+            }
+
+            $url = $service->redirect_url . '?type=' . $type . 'msisdn=' . $senderNumber . '&status=' . $status;
+            return redirect($url);
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }
@@ -111,9 +122,9 @@ class PartnerController extends Controller
         try {
 
             $serviceProviderInfo = ServiceProviderInfo::first();
-            $consent = Consent::select()->where('customer_reference', $acr_key)->first();
+            $consent = Consent::select()->where('customer_reference', $acr_key)->orderBy('id','DESC')->first();
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
-            $service = Service::select()->where('keyword', $request->service_keyword)->first();
+            $service = Service::select()->where('id', $consent->service_id)->first();
 
             if (!$service) {
                 return $this->respondWithError('Service not found');
@@ -124,55 +135,55 @@ class PartnerController extends Controller
             }
 
             $referenceCode = $this->referenceCode();
+            $subscriptionId = $this->generateRandomString(10);
 
-            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
-                ->post($url, [
-                    "amountTransaction" => [
-                        "endUserId" => $consent->customer_reference,
-                        "transactionOperationStatus" => "Charged",
-                        "referenceCode" => $referenceCode, // "REF-1234567890987654321"
-                        "paymentAmount" => [
-                            "chargingInformation" => [
-                                "amount" => $service->amount,
-                                "description" => [
-                                    $service->name
-                                ],
-                                "currency" => "BDT"
-                            ],
-                            "chargingMetaData" => [
-                                "purchaseCategoryCode" => "Game",
-                                "mandateId" => [
-                                    "subscription" => $request->subscription,
-                                    "subscriptionPeriod" => $service->validity,
-                                    "consentId" => $consent->consentId
-                                ]
-                            ]
+            $payload = [
+                "amountTransaction" => [
+                    "endUserId" =>  $acr_key,
+                    "paymentAmount" => [
+                        "chargingInformation" => [
+                            "amount" => $service->amount,
+                            "description" => $service->name,
+                            "currency" => "BDT"
                         ],
-                        "operatorId" => $serviceProviderInfo->operatorId
-                    ]
-                ]);
+                        "chargingMetaData" => [
+                            "purchaseCategoryCode" => "b2mtech-Game",
+                            "productId" => $service->productId,
+                            "mandateId" => [
+                                "subscription" => $subscriptionId,
+                                "subscriptionPeriod" => $service->validity,
+                                "consentId" => $consent->consentId
+                            ]
+                        ]
+                    ],
+                    "referenceCode" => $referenceCode, // "REF-1234567890987654321"
+                    "operatorId" => $serviceProviderInfo->operatorId,
+                    "transactionOperationStatus" => "Charged",
+                ]
+            ];
 
-
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->post($url, $payload);
             $responseData = $response->json();
-            // request Error
-            if (isset($responseData['requestError'])) {
-                return $this->respondWithError("error.!!", $responseData);
-            }
-
+            $payload = json_encode($payload);
 
             $partnerPayment = new PartnerPayment();
             $partnerPayment->acr_key = $consent->customer_reference;
             $partnerPayment->referenceCode = $request->referenceCode;
             $partnerPayment->service_keyword = $request->service_keyword;
-            $partnerPayment->subscription = $request->subscription;
+            $partnerPayment->subscription = $subscriptionId;
             $partnerPayment->consentId = $request->consentId;
+            $partnerPayment->payload = json_encode($payload);
             $partnerPayment->response = json_encode($responseData);
             $partnerPayment->save();
 
+            // send sms
 
+            $sendSMSURL = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $service->keyword . '&acr_key=' . $consent->customer_reference . '&senderName=' . $serviceProviderInfo->senderName;
 
+            // Http::get($sendSMSURL);
 
-            return $this->respondWithSuccess('smsmessaging', $responseData);
+            return redirect($sendSMSURL);
+
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }
@@ -293,98 +304,106 @@ class PartnerController extends Controller
 
     // renew
     // http://localhost:3000/api/partner/renew/55rmQvayRFfR0CS0KOntVYT0yERlgHVK
-    public function renew($acr_key){
+    public function renew($acr_key,$keyword){
 
 
         try {
 
-            $serviceProviderInfo = ServiceProviderInfo::first();
-            $consent = Consent::select()->where('customer_reference', $acr_key)->first();
+            //$serviceProviderInfo = ServiceProviderInfo::first();
+            //$serviceProviderInfo = new StdClass();
+            $serviceProviderInfo['username'] = 'b2mtech';
+            $serviceProviderInfo['password'] = 'drikVuPycBDJF0jSU4lAjTVroU2PTUJG';
+            $serviceProviderInfo['operatorId'] = 'GRA-BD';
+            $serviceProviderInfo['url'] = 'https://api.dob.telenordigital.com';
+            $serviceProviderInfo['senderName'] = '22900';
+            $serviceProviderInfo = (object) $serviceProviderInfo;
             $url = $serviceProviderInfo->url . '/partner/payment/v1/' . $acr_key . '/transactions/amount';
-            $service = Service::select()->where('id', $consent->service_id)->first();
+            $service = Service::select()->where('keyword', $keyword)->first();
 
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
 
-            if (!$consent) {
-                return $this->respondWithError('ACR not found');
-            }
-
             $referenceCode = $this->referenceCode();
-            // sender number validation::start
-            $senderNumber = substr($consent->msisdn, -11);
-            $senderNumber = "+88" . $senderNumber;
-            // sender number validation::end
 
-            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
-                ->post($url, [
-                    "amountTransaction" => [
-                        "endUserId" => $consent->customer_reference,
-                        "transactionOperationStatus" => "Charged",
-                        "referenceCode" => $referenceCode, // "REF-1234567890987654321"
-                        "paymentAmount" => [
-                            "chargingInformation" => [
-                                "amount" => $service->amount,
-                                "description" => [
-                                    $service->name
-                                ],
-                                "currency" => "BDT"
-                            ],
-                            "chargingMetaData" => [
-                                "purchaseCategoryCode" => "Game",
-                                "mandateId" => [
-                                    "subscription" => $consent->subscriptionPeriod,
-                                    "subscriptionPeriod" => $service->validity,
-                                    "consentId" => $consent->consentId
-                                ]
-                            ]
+            $subscriptionId = $this->generateRandomString(10);
+
+            $payload = [
+                "amountTransaction" => [
+                    "endUserId" =>  $acr_key,
+                    "paymentAmount" => [
+                        "chargingInformation" => [
+                            "amount" => $service->amount,
+                            "description" => $service->name,
+                            "currency" => "BDT"
                         ],
-                        "operatorId" => $serviceProviderInfo->operatorId
-                    ]
-                ]);
+                        "chargingMetaData" => [
+                            "purchaseCategoryCode" => "b2mtech-Game",
+                            "productId" => $service->productId,
+                            "mandateId" => [
+                                "subscription" => $subscriptionId,
+                                "subscriptionPeriod" => $service->validity,
+                            ]
+                        ]
+                    ],
+                    "referenceCode" => $referenceCode, // "REF-1234567890987654321"
+                    "operatorId" => $serviceProviderInfo->operatorId,
+                    "transactionOperationStatus" => "Charged",
+                ]
+            ];
+
+            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->post($url, $payload);
+
+
 
 
             $responseData = $response->json();
-            // request Error
-            if (isset($responseData['requestError'])) {
-                return $this->respondWithError("error.!!", $responseData);
-            }
 
 
             $renew = new Renew();
-            $renew->acr_key = $consent->customer_reference;
+            $renew->acr_key = $acr_key;
             $renew->referenceCode = $referenceCode;
-            $renew->service_keyword = $service->service_keyword;
-            $renew->subscription = $consent->subscriptionPeriod;
-            $renew->consentId = $consent->consentId;
+            $renew->service_keyword = $service->keyword;
+            $renew->subscription = $service->validity;
+            $renew->consentId = 'n/a'; //$consent->consentId;
             $renew->response = json_encode($responseData);
             $renew->save();
 
-
-            $urlLink = url('unsubscribe') . "/" . $acr_key;
-        // send sms::start
-            $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:'. $senderNumber . '/requests';
-            $msg = $service->name  . ' পরিষেবাটি Renew হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
-            $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
-                ->post($url, [
-                    'outboundSMSMessageRequest' =>
-                    [
-                        'address' => 'acr:' . $acr_key,
-                        'senderAddress' => 'tel:' . $senderNumber,
-                        'messageType' => 'ARN',
-                        'outboundSMSTextMessage' =>
-                        [
-                            'message' => $msg,
-                        ],
-                        'senderName' => $serviceProviderInfo->senderName
-
-                    ]
-                ]);
+            // request Error
+            if (isset($responseData['requestError'])) {
+                return 'received with error';
+                // $this->respondWithError("error.!!", $responseData);
+            }
 
 
-             $responseData = $response->json();
-             return $this->respondWithSuccess('smsmessaging', $responseData);
+           // $responseData = json_decode($responseData, true);
+
+            $renw_log = new RenewLog();
+            $renw_log->acr_key = $acr_key;
+            // $renw_log->status_code = ($responseData['amountTransaction']['responseCode']) ?$responseData['amountTransaction']['responseCode']:null;
+            // $renw_log->status = ($responseData['amountTransaction']['transactionOperationStatus'])? $responseData['amountTransaction']['transactionOperationStatus'] : null;
+            // $renw_log->serverReferenceCode = ($responseData['amountTransaction']['serverReferenceCode'])? $responseData['amountTransaction']['serverReferenceCode'] : null;
+            // $renw_log->resourceURL = ($responseData['amountTransaction']['resourceURL'])? $responseData['amountTransaction']['resourceURL'] : null;
+            // $renw_log->transactionOperationStatus = ($responseData['amountTransaction']['transactionOperationStatus'])? $responseData['amountTransaction']['transactionOperationStatus'] :null;
+            // $renw_log->totalAmountCharged = ($responseData['amountTransaction']['paymentAmount']['chargingInformation']['amount'])? $responseData['amountTransaction']['paymentAmount']['chargingInformation']['amount']: null;
+            // $renw_log->amount = ($responseData['amountTransaction']['paymentAmount']['chargingInformation']['amount'])? $responseData['amountTransaction']['paymentAmount']['chargingInformation']['amount']:null;
+            // $renw_log->description = ($responseData['amountTransaction']['paymentAmount']['chargingInformation']['description'])? $responseData['amountTransaction']['paymentAmount']['chargingInformation']['description']: null;
+            // $renw_log->referenceCode = ($responseData['amountTransaction']['referenceCode'])?$responseData['amountTransaction']['referenceCode']:null;
+            // $renw_log->currency = ($responseData['amountTransaction']['paymentAmount']['chargingInformation']['currency'])?$responseData['amountTransaction']['paymentAmount']['chargingInformation']['currency']: null;
+            // $renw_log->purchaseCategoryCode = ($responseData['amountTransaction']['paymentAmount']['chargingMetaData']['purchaseCategoryCode'])? $responseData['amountTransaction']['paymentAmount']['chargingMetaData']['purchaseCategoryCode']: null;
+            $renw_log->service_keyword = $service->keyword;
+            $renw_log->operatorId = $serviceProviderInfo->operatorId;
+            // $renw_log->subscription = ($responseData['amountTransaction']['paymentAmount']['chargingMetaData']['mandateId']['subscriptionPeriod'])? $responseData['amountTransaction']['paymentAmount']['chargingMetaData']['mandateId']['subscriptionPeriod']: null;
+            //$renw_log->consentId = $responseData['amountTransaction']['paymentAmount']['chargingMetaData']['mandateId']['consentId'];
+            $renw_log->payload = json_encode($payload);
+            $renw_log->response = json_encode($responseData);
+            $renw_log->keyword = $keyword;
+            $renw_log->created = Carbon::now();
+            $renw_log->updated = Carbon::now();
+            $renw_log->save();
+
+            return 'recevied with success';
+                        //  return $this->respondWithSuccess('smsmessaging', $responseData);
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }
@@ -469,7 +488,7 @@ class PartnerController extends Controller
     }
 
     function referenceCode(){
-        $referenceCode = "REF-" . $this->generateRandomString(12);
+        $referenceCode =  $this->generateRandomString(20);
         $getRef = Refund::where('referenceCode', $referenceCode)->first();
         if($getRef){
             $this->referenceCode();

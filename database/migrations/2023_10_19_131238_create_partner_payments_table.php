@@ -20,6 +20,8 @@ class CreatePartnerPaymentsTable extends Migration
             $table->string('service_keyword');
             $table->string('subscription');
             $table->string('consentId');
+            $table->string('status')->commit('1 means success and 0 means failure');
+            $table->json('payload');
             $table->json('response');
             $table->timestamps();
         });
