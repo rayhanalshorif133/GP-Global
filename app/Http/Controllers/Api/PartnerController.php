@@ -21,31 +21,21 @@ use Illuminate\Support\Carbon;
 class PartnerController extends Controller
 {
 
-    // getAcrs
-
-    public function getAcrs(){
-        return "getAcrs";
-    }
-
-    // smsmessaging
     public function smsmessaging(Request $request, $senderNumber)
     {
 
         try {
 
-             // sender number validation::start
              $senderNumber = substr($senderNumber, -11);
              $senderNumber = "+88" . $senderNumber;
-             // sender number validation::end
-
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $senderNumber . '/requests';
             $service = Service::select()->where('keyword', $request->serviceKeyword)->first();
             if (!$service) {
                 return $this->respondWithError('Service not found');
             }
-            $urlLink = url('unsubscribe') . "/" . $request->acr_key;
-            $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে ' . $urlLink . ' এ প্রবেশ করুন।';
+            $urlLink = $service->portal_link;
+            $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে visit করুন। ' . $urlLink;
 
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, [
@@ -180,7 +170,7 @@ class PartnerController extends Controller
 
             $sendSMSURL = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $service->keyword . '&acr_key=' . $consent->customer_reference . '&senderName=' . $serviceProviderInfo->senderName;
 
-            // Http::get($sendSMSURL);
+            Http::get($sendSMSURL);
 
             return redirect($sendSMSURL);
 
@@ -197,10 +187,8 @@ class PartnerController extends Controller
             $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key;
             $consent = Consent::select()->where('customer_reference', $acr_key)->first();
 
-             // sender number validation::start
              $msisdn = substr($consent->msisdn, -11);
              $msisdn = "+88" . $msisdn;
-             // sender number validation::end
 
 
             // send sms::start
@@ -303,7 +291,6 @@ class PartnerController extends Controller
     }
 
     // renew
-    // http://localhost:3000/api/partner/renew/55rmQvayRFfR0CS0KOntVYT0yERlgHVK
     public function renew($acr_key,$keyword){
 
 

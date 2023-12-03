@@ -61,14 +61,7 @@ Route::middleware('auth')
     ->get('token/create', [AuthController::class, 'createToken'])->name('token.create');
 
 
-// consent/prepare
-Route::prefix('consent/prepare/')
-    ->name('consent.prepare.')
-    ->group(function () {
-        Route::get('success', [ConsentController::class, 'consentPrepareSuccess'])->name('success');
-        Route::get('deny', [ConsentController::class, 'consentPrepareDeny'])->name('deny');
-        Route::get('error', [ConsentController::class, 'consentPrepareError'])->name('error');
-});
+Route::get('consent/prepare/{id}/{type}',[ConsentController::class, 'consentPrepare']);
 
 
 Route::prefix('partner/smsmessaging/')

@@ -10,6 +10,7 @@ use App\Models\Service;
 use App\Models\PartnerPayment;
 use App\Models\ChargeLog;
 use App\Models\Subscriber;
+use App\Models\SubUnSubLog;
 use Illuminate\Support\Facades\Http;
 
 class PaymentController extends Controller
@@ -59,7 +60,6 @@ class PaymentController extends Controller
                 $responseData = $response->json();
 
 
-                // $status = isset($responseData['requestError']) ? 0 : 1;
                 $status = isset($responseData->requestError) ? 0 : 1;
 
                 $payment = new PartnerPayment();
@@ -75,7 +75,6 @@ class PaymentController extends Controller
 
                 if($status == 1){
 
-                    // charge log:start
                     $chargeLog = new ChargeLog();
                     $chargeLog->acr_key = $consent->customer_reference;
                     $chargeLog->msisdn = $consent->msisdn;
@@ -84,11 +83,11 @@ class PaymentController extends Controller
                     $chargeLog->type = 'subs';
                     $chargeLog->charge_date = date('Y-m-d');
                     $chargeLog->save();
-                    // charge log:end
-                    // subscriber:start
                     $subscriber = Subscriber::select()
                     ->where('msisdn', $consent->msisdn)
-                    ->where('acr', $consent->customer_reference)->first();
+                    ->where('keyword', $service->keyword)
+                    ->where('status',1)
+                    ->first();
 
                     if(!$subscriber){
                         $subscriber = new Subscriber();
@@ -104,26 +103,29 @@ class PaymentController extends Controller
                     $subscriber->save();
                     // subscriber:start
 
-                    // send sms for payment success
+                     $subUnSubLog = new SubUnSubLog();
+                     $subUnSubLog->msisdn = $consent->msisdn;
+                     $subUnSubLog->keyword = $service->keyword;
+                     $subUnSubLog->status = 1;
+                     $subUnSubLog->opt_date = date('Y-m-d');
+                     $subUnSubLog->opt_time = date('H:i:s A');
+                     $subUnSubLog->save();
+
                     $sendSMSURL = url('api/partner/smsmessaging/' . $consent->msisdn) . '?serviceKeyword=' . $service->keyword . '&acr_key=' . $consent->customer_reference . '&senderName=' . $serviceProviderInfo->senderName;
                     Http::get($sendSMSURL);
                     // redirect
-                    $url = $consent->api_url . '?msisdn=' . $consent->msisdn . 'acr=' . $consent->customer_reference . '&type=subs&result=success';
+                    $url = $service->redirect_url . '?msisdn=' . $consent->msisdn . '&acr=' . $consent->customer_reference . '&type=subs&result=success';
                     return redirect($url);
                 }else{
                     // redirect
-                    $url = $consent->api_url . '?msisdn=' . $consent->msisdn . 'acr=' . $consent->customer_reference . '&type=subs&result=failed';
+                    $url = $service->redirect_url . '?msisdn=' . $consent->msisdn . '&acr=' . $consent->customer_reference . '&type=subs&result=failed';
                     return redirect($url);
                 }
-
-
-
-                return $this->respondWithSuccess('Payment success!', $request->all());
             }else{
                 return $this->respondWithError('Consent not found!');
             }
         } catch (\Throwable $th) {
-            return $this->respondWithError($th->getMessage());
+            return $this->respondWithError("form paymnet",$th->getMessage());
         }
     }
 

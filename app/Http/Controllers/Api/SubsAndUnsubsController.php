@@ -26,12 +26,22 @@ class SubsAndUnsubsController extends Controller
             $service = Service::select()->where('keyword', $keyword)->first();
             $api_url = $service->redirect_url;
             $url = $serviceProviderInfo->url . '/partner/v3/consent/prepare';
-            $urls = [
-                'ok' => url('consent/prepare/success'),
-                'deny' => url('consent/prepare/deny'),
-                'error' => url('consent/prepare/error'),
-            ];
+            
+            $consent = new Consent();
+            $consent->msisdn = $msisdn;
+            $consent->amount = $service->amount;
+            $consent->currency = "BDT";
+            $consent->subscriptionPeriod = $service->validity;
+            $consent->api_url = $api_url;
+            $consent->service_id = $service->id;
+            $consent->save();
 
+            $urls = [
+                'ok' => url('consent/prepare/'. $consent->id .'/success/'),
+                'deny' => url('consent/prepare/'. $consent->id .'/deny'),
+                'error' => url('consent/prepare/'. $consent->id .'/error'),
+            ];
+            $consent->urls = json_encode($urls);
             $payload = [
                 'amount' => $service->amount,
                 'currency' => "BDT",
@@ -49,29 +59,18 @@ class SubsAndUnsubsController extends Controller
             ];
 
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)->post($url,$payload);
-
             $responseData = $response->json();
 
-            $consent = new Consent();
-            $consent->msisdn = $msisdn;
-            $consent->amount = $service->amount;
-            $consent->currency = "BDT";
-            $consent->subscriptionPeriod = $service->validity;
-            $consent->urls = json_encode($urls);
-            $consent->api_url = $api_url;
-            $consent->service_id = $service->id;
             $consent->result_code = $responseData['resultCode'];
             $consent->payload = json_encode($payload);
             $consent->response = json_encode($responseData);
             $consent->save();
-
-
+            
             if ($responseData['resultCode'] == "SUCCESS") {
                 return redirect($responseData['url']);
             } else {
-                return response()->json([
-                    'message'  => $responseData['message'],
-                ], 201);
+                $url = $service->redirect_url . '?msisdn=' . $consent->msisdn . '&type=subs&result=failed';
+                return redirect($url);
             }
 
         } catch (\Throwable $th) {
@@ -114,10 +113,8 @@ class SubsAndUnsubsController extends Controller
             $subscriber->save();
 
 
-             // sender number validation::start
              $msisdn = substr($consent->msisdn, -11);
              $msisdn = "+88" . $msisdn;
-             // sender number validation::end
 
              // send sms::start
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $msisdn . '/requests';

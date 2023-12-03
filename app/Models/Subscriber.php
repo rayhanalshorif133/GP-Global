@@ -11,12 +11,22 @@ class Subscriber extends Model
 
     protected $fillable = [
         'msisdn',
-        'acr',
-        'tid',
+        'rmsisdn',
+        'opr',
+        'channel',
         'status',
-        'keyword',
+        'service',
+        'sub_service',
         'subs_date',
-        'unsubs_date'
+        'unsubs_date',
+        'charge_status',
+        'charge_date',
+        'shortcode',
+        'entry',
+        'last_update',
+        'in_msg_id',
+        'zoneid',
+        'flag',
+        'tid',
     ];
-
 }

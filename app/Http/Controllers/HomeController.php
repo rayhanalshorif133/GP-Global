@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HitLog;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +26,7 @@ class HomeController extends Controller
     public function index()
     {
 
-        $hitLogs = HitLog::count();
+        $hitLogs = 0;
         $services = Service::count();
         return view('home', compact('services', 'hitLogs'));
     }
