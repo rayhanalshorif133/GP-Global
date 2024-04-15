@@ -1,0 +1,59 @@
+.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}
+
+.optional::after {
+    content: " (optional)";
+    color: #999;
+    font-weight: normal;
+}
+
+.tk::after {
+    content: "৳";
+    color: #000;
+    font-weight: normal;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* remove increment and decrement btn from input number */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+
+.space-x-2 > * + * {
+    --tw-space-x-reverse: 0;
+    margin-left: calc(0.7rem * var(--tw-space-x-reverse));
+    margin-right: calc(0.7rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.table td, .table th {
+    padding: .25rem!important;
+    text-align: center!important;
+  }
+
+.bg-purple {
+    background-color: #5f00b9!important
+}
+.bg-orange {
+    background-color: #d15a18!important;
+    color: #fff!important;
+}
+
+.bg-orange a{
+    color: #fff!important;
+}
+
+.bg-light-custom {
+    background-color: #00e2ff!important;
+}
+
+.bg-light-custom a{
+    color: #000!important;
+}
