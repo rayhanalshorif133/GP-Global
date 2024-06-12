@@ -11,7 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 class ServiceController extends Controller
 {
 
-    public function _construct() {
+    public function __construct() {
         $this->middleware('auth');
     }
 

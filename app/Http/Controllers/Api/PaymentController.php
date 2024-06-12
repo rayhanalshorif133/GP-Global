@@ -45,6 +45,7 @@ class PaymentController extends Controller
                         ],
                         "chargingMetaData" => [
                             "purchaseCategoryCode" => "b2mtech-Game",
+                            "channel" => "selfWeb",
                             "productId" => $service->productId,
                             "mandateId" => [
                                 "subscription" => $subscriptionId,
@@ -71,6 +72,7 @@ class PaymentController extends Controller
                                 ],
                                 "chargingMetaData" => [
                                     "purchaseCategoryCode" => "b2mtech-Game",
+                                    "channel" => "selfWeb",
                                     "productId" => $service->productId,
                                     "mandateId" => [
                                         "consentId" => $consent->consentId
@@ -191,7 +193,7 @@ class PaymentController extends Controller
                     
 
                     // redirect
-                    $url = $redirect_failed_url . '?keyword='. $service->keyword . '&msisdn=' . $consent->msisdn . '&acr=' . $consent->customer_reference . '&type=subs&result=failed';
+                    $url = $redirect_failed_url . '?keyword='. $service->keyword . '&msisdn=' . $consent->msisdn . '&acr=' . $consent->customer_reference . '&type=subs&result=failed&op_time=' . date('H:i:s');
                     if(isset($responseData['requestError'])){
 
                         //  notify in notification api

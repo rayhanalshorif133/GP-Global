@@ -47,11 +47,11 @@ Route::get('/', [WebHomeController::class,'index'])->name('web.home');
 
 Auth::routes();
 
-Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+Route::middleware('auth')->get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-Route::resource('service', ServiceController::class);
-Route::resource('service-provider-info', ServiceProviderInfoController::class);
-Route::resource('product', ProductController::class);
+Route::middleware('auth')->resource('service', ServiceController::class);
+Route::middleware('auth')->resource('service-provider-info', ServiceProviderInfoController::class);
+Route::middleware('auth')->resource('product', ProductController::class);
 
 
 

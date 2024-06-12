@@ -26,8 +26,9 @@ class PartnerController extends Controller
 
         try {
 
-             $senderNumber = substr($senderNumber, -11);
-             $senderNumber = "+88" . $senderNumber;
+            $GET_NUMBER = $senderNumber;
+            $senderNumber = substr($senderNumber, -11);
+            $senderNumber = "+88" . $senderNumber;
             $serviceProviderInfo = ServiceProviderInfo::first();
             $url = $serviceProviderInfo->url . '/partner/smsmessaging/v2/outbound/tel:' . $senderNumber . '/requests';
             $service = Service::select()->where('keyword', $request->serviceKeyword)->first();
@@ -35,7 +36,16 @@ class PartnerController extends Controller
                 return $this->respondWithError('Service not found');
             }
             $urlLink = $service->portal_link;
-            $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে visit করুন। ' . $urlLink;
+
+            if($request->serviceKeyword == 'ESD' || $request->serviceKeyword == 'ESW' || $request->serviceKeyword == 'ES2' || $request->serviceKeyword == 'ES1'){
+                $GET_NUMBER = substr($GET_NUMBER, -11);
+                $GET_NUMBER = "88" . $GET_NUMBER;
+                $visit = 'https://grameenphone.grind.mobi/register?a=' . $GET_NUMBER;
+                $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। Visit: ' . $visit;
+            }else{
+                $msg = $service->name  . ' পরিষেবাটি চালু হয়েছে। আপনার কাছ থেকে ' . $service->amount . '+ 16% TAX (VAT,SC) টাকা হারে কর্তন করা হবে। পরিষেবাটি বন্ধ করতে visit করুন। ' . $urlLink;
+            }
+
 
             $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
                 ->post($url, [
@@ -139,6 +149,7 @@ class PartnerController extends Controller
                         ],
                         "chargingMetaData" => [
                             "purchaseCategoryCode" => "b2mtech-Game",
+                            "channel" => "selfWeb",
                             "productId" => $service->productId,
                             "mandateId" => [
                                 "subscription" => $subscriptionId,
