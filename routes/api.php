@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SubsAndUnsubsController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\LogController;
 use App\Http\Controllers\Api\OnDemandController;
+use App\Http\Controllers\Api\RechargeAndBuyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,9 @@ Route::match(['get', 'post'], '/status-check', [SubsAndUnsubsController::class, 
 
 
 
+Route::match(['get', 'post'], '/balance-check', [SubsAndUnsubsController::class, 'balanceCheck'])->name('balance-check');
+
+
 
 // notification
 Route::middleware('basicauth')->post('notification', [NotificationController::class, 'notification'])->name('notification');
@@ -82,6 +86,15 @@ Route::group(['prefix' => 'on-demand/', 'name' => 'on-demand.'], function () {
 
     Route::match(['get', 'post'], '{id}/charge', [OnDemandController::class, 'charge'])
         ->name('charge');
+});
+
+
+Route::group(['prefix' => 'recharge-and-buy/', 'name' => 'recharge-and-buy.'], function () {
+    Route::match(['get', 'post'], '/prepare', [RechargeAndBuyController::class, 'prepare'])
+        ->name('prepare');
+
+    Route::match(['get', 'post'], '/{recharge_and_buy_id}/callback/{status}', [RechargeAndBuyController::class, 'callback'])
+        ->name('callback');
 });
 
 

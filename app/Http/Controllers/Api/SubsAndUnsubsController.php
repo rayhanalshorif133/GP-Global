@@ -18,7 +18,7 @@ class SubsAndUnsubsController extends Controller
     public function subscription(Request $request)
     {
 
-        // https://gpglobal.b2mwap.com/api/subscription?keyword=GSD&msisdn=8801323174104&success_url=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dphp%3Fhello/&failed_url=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dphp%3Fhello
+        // https://gpglobal.b2mwap.com/api/subscription?keyword=GSD&msisdn=8801323174104&success_url=sub_url&failed_url=unsubscribe___URL
 
         try {
 
@@ -26,9 +26,12 @@ class SubsAndUnsubsController extends Controller
             $keyword = $request->keyword;
             $msisdn = $request->msisdn;
 
-            $success_url = rawurldecode($request->success_url);
+            // $success_url = rawurldecode($request->success_url);
 
-            $failed_url = rawurldecode($request->failed_url);
+            // $failed_url = rawurldecode($request->failed_url);
+
+
+
 
 
             if (!$keyword) {
@@ -39,14 +42,15 @@ class SubsAndUnsubsController extends Controller
             $serviceProviderInfo = ServiceProviderInfo::first();
             $service = Service::select()->where('keyword', $keyword)->first();
 
+
             $api_url = $service->redirect_url;
 
 
             $url = $serviceProviderInfo->url . '/partner/v3/consent/prepare';
 
             if (!$msisdn) {
-                if ($failed_url) {
-                    $redirectUrl = $failed_url . '?msisdn=&type=subs&result=failed';
+                if ($request->failed_url) {
+                    $redirectUrl = $request->failed_url . '?msisdn=&type=subs&result=failed';
                 } else {
                     $redirectUrl = $api_url . '?msisdn=&type=subs&result=failed';
                 }
@@ -55,11 +59,11 @@ class SubsAndUnsubsController extends Controller
             $consent = new Consent();
             $consent->msisdn = $msisdn;
             $consent->amount = $service->amount;
-            if ($success_url) {
-                $consent->success_url = $success_url;
+            if ($request->success_url) {
+                $consent->success_url = $request->success_url;
             }
-            if ($failed_url) {
-                $consent->failed_url = $failed_url;
+            if ($request->failed_url) {
+                $consent->failed_url = $request->failed_url;
             }
             $consent->currency = "BDT";
             $consent->subscriptionPeriod = $service->validity;
@@ -67,11 +71,14 @@ class SubsAndUnsubsController extends Controller
             $consent->service_id = $service->id;
             $consent->save();
 
+          
+
             $urls = [
                 'ok' => url('consent/prepare/' . $consent->id . '/success/'),
                 'deny' => url('consent/prepare/' . $consent->id . '/deny'),
                 'error' => url('consent/prepare/' . $consent->id . '/error'),
             ];
+
             $consent->urls = json_encode($urls);
             $payload = [
                 'amount' => $service->amount,
@@ -101,11 +108,13 @@ class SubsAndUnsubsController extends Controller
             $consent->save();
 
 
+
+
             if ($responseData['resultCode'] == "SUCCESS") {
                 return redirect($responseData['url']);
             } else {
-                if ($failed_url) {
-                    $url = $failed_url . '?keyword=' . $service->keyword . '&msisdn=' . $consent->msisdn . '&type=subs&result=failed';
+                if ($consent->failed_url) {
+                    $url = $consent->failed_url . '?keyword=' . $service->keyword . '&msisdn=' . $consent->msisdn . '&type=subs&result=failed';
                 } else {
                     $url = $service->redirect_url . '?keyword=' . $service->keyword . '&msisdn=' . $consent->msisdn . '&type=subs&result=failed';
                 }
@@ -154,14 +163,13 @@ class SubsAndUnsubsController extends Controller
                 $msg = 'Goldenstream সার্ভিসটি সফলভাবে বন্ধ হয়েছে । পুনরায় চালু করতে ভিজিট করুন  visit https://goldenstreams.co/ ';
             } else if ($keyword == 'GAJAL') {
                 $msg = 'Gajal সার্ভিসটি সফলভাবে বন্ধ হয়েছে । পুনরায় চালু করতে ভিজিট করুন  visit http://gajal.b2mwap.com/';
-            }else if($keyword == 'BDGD'){
-                $msg = 'BD Gamers সার্ভিসটি সফলভাবে বন্ধ হয়েছে । পুনরায় চালু করতে ভিজিট করুন  visit http://bdgamers.club/'; 
-            }             
-            else {
+            } else if ($keyword == 'BDGD') {
+                $msg = 'BD Gamers সার্ভিসটি সফলভাবে বন্ধ হয়েছে । পুনরায় চালু করতে ভিজিট করুন  visit http://bdgamers.club/';
+            } else {
                 $msg = $service->name  . ' পরিষেবাটি সফলভাবে বন্ধ করে দেওয়া হয়েছে।';
             }
 
-            
+
             $payload = [
                 'outboundSMSMessageRequest' =>
                 [
@@ -262,5 +270,53 @@ class SubsAndUnsubsController extends Controller
         } catch (\Throwable $th) {
             return $this->respondWithError('Something went wrong...!', $th->getMessage());
         }
+    }
+
+    public function balanceCheck(Request $request)
+    {
+
+        /* 
+            https://portal.dob.telenordigital.com/assets/doc/partner/api/openapi.html#tag/Balance-Check-API/operation/balance
+
+            Note! Not available for all the partners
+        */ 
+
+        return response()->json([
+            'message'  => 'Note! Not available for all the partners',
+        ], 201);
+
+        $serviceProviderInfo = ServiceProviderInfo::first();
+        $acr_key = $request->acr;
+
+        $subscriber = Subscriber::select()->where('acr', $acr_key)->first();
+
+        if (!$subscriber) {
+            return response()->json([
+                'message'  => 'Subscriber not found',
+            ], 201);
+        }
+
+
+        $url = $serviceProviderInfo->url . '/partner/acrs/' . $acr_key . '/balance';
+
+        $response = Http::withBasicAuth($serviceProviderInfo->username, $serviceProviderInfo->password)
+            ->get($url, [
+                'acr' => $acr_key,
+            ]);
+        return response()->json($response, 201);
+
+        $responseData = $response->json();
+
+        // $status = isset($responseData['requestError']) ? 0 : 1;
+
+
+        $responseData = $response->json();
+        if (isset($responseData['requestError'])) {
+            return $this->respondWithError("error.!!", $responseData['requestError']['serviceException']);
+        }
+
+        return response()->json([
+            'acr' => $acr,
+        ], 201);
     }
 }

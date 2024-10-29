@@ -27,7 +27,6 @@ class PaymentController extends Controller
             $consent = Consent::find($consent_id);
 
 
-           
 
 
             if($consent){
@@ -240,8 +239,11 @@ class PaymentController extends Controller
                         $messageId = $responseData['requestError']['policyException']['messageId'];
                         if($messageId == 'POL1000'){
                             $portal_url = $service->portal_link;
-                            $msg = 'আপনার মোবাইলে পর্যাপ্ত পরিমানে ব্যালেন্স নেয়, রিচার্জ করে আবার চেষ্টা করুন। বিস্তারিত ' . $portal_url . '.';
+                            $msg = 'আপনার মোবাইলে পর্যাপ্ত পরিমানে ব্যালেন্স নেই, রিচার্জ করে আবার চেষ্টা করুন। বিস্তারিত ' . $portal_url . '.';
                             $this->sendErrorSMS($consent,$service,$url,$msg);
+                            $acr = $consent->customer_reference;
+                            $recharge_url =  url('/api/recharge-and-buy/prepare?acr=' . $acr .'&consent_id=' . $consent->id);
+                            return redirect()->away($recharge_url);
                         }
 
                         if($messageId == 'POL0253'){
@@ -270,13 +272,20 @@ class PaymentController extends Controller
                 return $this->respondWithError('Consent not found!');
             }
         } catch (\Throwable $th) {
-            return $this->respondWithError("form paymnet",$th->getMessage());
+            if (strpos($redirect_failed_url, "?") !== false) {
+                $url = $redirect_failed_url . '&keyword='. $service->keyword . '&msisdn=' . $consent->msisdn . '&acr=' . $consent->customer_reference . '&type=subs&result=failed&op_time=' . date('Y-m-d H:i:s');
+            }else{
+                $url = $redirect_failed_url . '?keyword='. $service->keyword . '&msisdn=' . $consent->msisdn . '&acr=' . $consent->customer_reference . '&type=subs&result=failed&op_time=' . date('Y-m-d H:i:s');
+            }
+            return redirect()->away($url);
+            exit;  
         }
     }
 
 
     function referenceCode(){
         $referenceCode =  $this->generateRandomString(20);
+        
         $getRef = PartnerPayment::where('referenceCode', $referenceCode)->first();
         if($getRef){
             $this->referenceCode();
@@ -322,6 +331,8 @@ class PaymentController extends Controller
 
         return redirect($redirect_url);
     }
+    // sendErrorSMSAndRecharge
+
 
 
     function generateRandomString($length = 25) {

@@ -15,7 +15,6 @@ class ConsentController extends Controller
     {
 
 
-        //dd($request->all());
         $consent = Consent::find($id);
 
         $newConsentBackLog = new ConsentBackLog();
